@@ -53,6 +53,10 @@ const EMPTY_SEG = Dict{Int,NTuple{4,Float64}}()
 const FOCUS_K = parse(Int, get(ENV, "FOCUS_K", "60"))
 const REFRESH = parse(Float64, get(ENV, "REFRESH", "18"))
 const FOCUS_WINDOW = parse(Float64, get(ENV, "FOCUS_WINDOW", "1200"))
+# held は元々「次runで(＝プロセス再起動でしか)revisit」だった。でも1回のrunが半日以上続くことも
+# あり、朝の一時的な運行外がそのまま夕方まで引きずられていた。だからcooldown後に一度だけ
+# 再挑戦させる。まだ運行外ならplateauNですぐheldへ戻るだけなので、無駄打ちは小さい。
+const HELD_COOLDOWN = parse(Float64, get(ENV, "HELD_COOLDOWN", "3600"))
 const RECON_MIN = parse(Float64, get(ENV, "RECON_MIN", "30"))
 const CLOUD_CAP = parse(Int, get(ENV, "CLOUD_CAP", "100000"))   # DB保持/速度モデルが使う直近点数（cloudはSQLite・追記O(new)）
 const RECON_CAP = parse(Int, get(ENV, "RECON_CAP", "30000"))    # reconstruct(幾何)が query する直近点数。30k≒59ms・bias床で100kと同等。100kは289msで poll経路を塞ぐため。
@@ -95,14 +99,15 @@ mutable struct RS
     done::Bool         # 真の完了（cov>=目標）だけ。永久にスキップ。
     hold::Int          # 連続で「新カバレッジ無し」の回数（plateau 判定）
     stops_ok::Bool     # 停留所を取得済みか
-    held::Bool         # plateau で「保留」。このセッションは休む が、次の run で revisit（done とは別）。
+    held::Bool         # plateau で「保留」。cooldown経過で一度だけ再挑戦、それでもダメならまた held。
+    held_at::Float64   # heldになった時刻(epoch秒)。cooldown判定に使う。0=未held。
     uniq::Vector{Float64}   # trunk地図: 区間kの固有度∈(0,1]（1=完全固有,小=共通幹線）。trunk.json由来・静的。空=一様
     last_obs::Float64       # 最後にバスを見た epoch秒（staleness用）。0=未観測
     stopnode::Dict{Int,String}   # ord→nodeid（표준노드ID）。路線間で共有＝路線間fusion(補間)の鍵。progressに永続。
 end
 
 fresh(rid, cc) = RS(rid, cc, Dict{Int,Tuple{Float64,Float64}}(), 0, 0, 0.0,
-    Float64[], Tuple{Float64,Float64,Float64,Int,Int,Float64,String}[], Set{Int}(), 0, 0.0, false, 0, false, false,
+    Float64[], Tuple{Float64,Float64,Float64,Int,Int,Float64,String}[], Set{Int}(), 0, 0.0, false, 0, false, false, 0.0,
     Float64[], 0.0, Dict{Int,String}())
 
 progpath(rid) = joinpath(PROGDIR, "$(rid).json")
@@ -170,7 +175,7 @@ function load_state(rid, cc)
             seg_lengths(stopxy, nseg, lat0),
             Tuple{Float64,Float64,Float64,Int,Int,Float64,String}[],   # cloud は空（実体は SQLite）
             Set(Int(x) for x in s.covered), Int(s.reqs), Float64(s.cov),
-            Bool(s.done), Int(s.hold), Bool(s.stops_ok), false,   # held は毎 run リセット＝revisit
+            Bool(s.done), Int(s.hold), Bool(s.stops_ok), false, 0.0,   # held/held_at は毎 run リセット＝revisit
             Float64[], last_obs, stopnode)   # uniq は起動時 load_trunk! で埋める
     catch e
         @warn "state 読めず、作り直し: $rid" exception = e
@@ -285,7 +290,7 @@ function process_route!(s::RS, spent, busesTotal, gained, okPolls, dailyBudget, 
         push!(NODEID_TRIED, s.rid)   # 試行済み＝以後 nodeid 欠落でも再取得しない（予算ドレイン防止）
         if !ensure_stops!(s)
             s.hold += 1
-            s.hold >= plateauN && (s.held = true)   # 停留所が取れない＝保留（次runでrevisit, doneにしない）
+            s.hold >= plateauN && (s.held = true; s.held_at = time())   # 停留所が取れない＝保留（cooldownでrevisit, doneにしない）
             save_state(s)
             return
         end
@@ -319,7 +324,7 @@ function process_route!(s::RS, spent, busesTotal, gained, okPolls, dailyBudget, 
     else
         s.hold += 1
     end
-    (!s.done && s.hold >= plateauN) && (s.held = true)   # バス0が plateauN 回続いた＝運行外 → 保留(次runでrevisit)
+    (!s.done && s.hold >= plateauN) && (s.held = true; s.held_at = time())   # バス0が plateauN 回続いた＝運行外 → 保留(cooldownでrevisit)
     save_state(s)
 end
 
@@ -422,8 +427,15 @@ function main_all()
             runDay = today_kst(); spent[] = 0; save_daily(0)
             println("KST 日付変更 → 本日の spent を 0 にリセット")
         end
-        cand = [s for s in states if !s.done && !s.held]
-        isempty(cand) && (println("全路線 done か 保留。次 run で保留を revisit。"); break)
+        # cooldown経過分は一度だけ再挑戦させる（まだ運行外ならplateauNですぐ held に戻るだけ）。
+        nowt0 = time()
+        for s in states
+            (s.held && (nowt0 - s.held_at) >= HELD_COOLDOWN) && (s.hold = 0; s.held = false)
+        end
+        # done も cand に含める：route_need は覆えた区間を寄与0にするので、doneは陳腐化ボーナスだけの
+        # 低needになる。予算に余裕がある窓だけ、自然と下位に混ざって density のため再訪される。
+        cand = [s for s in states if !s.held]
+        isempty(cand) && (println("全路線 保留。次 run で revisit。"); break)
         # need 上位 FOCUS_K に集中（ローテーション）。窓の間その群だけを密に叩き、終わったら need 再計算で次群へ。
         nowt = time()
         order = sortperm([route_need(s, nowt) for s in cand], rev = true)
