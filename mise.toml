@@ -1,0 +1,4 @@
+# Toolchain for this repo. node is here because apps/www and apps/tsubaki are
+# built and deployed with npm / wrangler (see README).
+[tools]
+node = "22"

@@ -6,19 +6,13 @@ const langLabel = Object.fromEntries(LANGS.map((l) => [l.key, l.label]));
 
 export function Credits() {
   return (
-    <ul className="credit-list" role="list">
+    <ul className="rows" role="list">
       {credits.map((c) => (
-        <li key={c.lang} className="credit-item">
-          <span className="credit-tag" lang={htmlLang(c.lang)}>
+        <li key={c.lang} className="row row-credit">
+          <span className="row-tag" lang={htmlLang(c.lang)}>
             {langLabel[c.lang] ?? c.lang}
           </span>
-          <a
-            className="credit-name"
-            href={c.url}
-            target="_blank"
-            rel="noreferrer"
-            lang={htmlLang(c.lang)}
-          >
+          <a className="row-name" href={c.url} target="_blank" rel="noreferrer" lang={htmlLang(c.lang)}>
             {c.ruby ? (
               <ruby>
                 {c.ruby.map((seg, i) => (

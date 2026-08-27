@@ -1,11 +1,11 @@
 import { useEffect, useState } from "preact/hooks";
 import { locale, LANGS, htmlLang } from "./data/i18n";
-import { TopBar } from "./components/TopBar";
-import { LangToggle } from "./components/LangToggle";
-import { Hero } from "./components/Hero";
-import { ProjectList } from "./components/ProjectList";
-import { ConnectLinks } from "./components/ConnectLinks";
+import { Voices } from "./components/Voices";
+import { Making } from "./components/Making";
+import { Rooms } from "./components/Rooms";
+import { Connect } from "./components/Connect";
 import { Credits } from "./components/Credits";
+import { NappingCat } from "./components/NappingCat";
 
 const VALID_KEYS = new Set(LANGS.map((l) => l.key));
 const MAJOR_LANGS = ["en", "ja", "ko"];
@@ -23,6 +23,18 @@ function getLangFromURL() {
   return param && VALID_KEYS.has(param) ? param : detectMajorLang();
 }
 
+function Part({ id, title, note, children }) {
+  return (
+    <section className="part" aria-labelledby={id}>
+      <h2 id={id} className="part-title">
+        {title}
+        {note && <span className="part-note"> — {note}</span>}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
 export default function App() {
   const [lang, setLangState] = useState(getLangFromURL);
   const tr = locale(lang);
@@ -37,46 +49,45 @@ export default function App() {
   }
 
   return (
-    <div className="page">
-      <TopBar lang={lang} setLang={setLang} tr={tr} />
-      <div className="lang-fixed">
-        <LangToggle lang={lang} setLang={setLang} />
-      </div>
+    <main className="letter">
+      <header className="opening">
+        <p className="eyebrow">{tr.eyebrow}</p>
+        <h1 className="title">
+          f3liz<span className="casa">.casa</span>
+        </h1>
+        <p className="felis">
+          <span lang="la">/felis/</span> — {tr.felis}
+        </p>
+        {/* key={lang}: remount so the greeting fades in again in the new voice */}
+        <p className="wish" key={lang}>{tr.wish}</p>
+        <Voices lang={lang} setLang={setLang} label={tr.langAria} />
+      </header>
 
-      <main className="main">
-        <section className="section" aria-labelledby="hero-heading">
-          <Hero tr={tr} headingId="hero-heading" />
-        </section>
+      <Part id="making" title={tr.making}>
+        <Making lang={lang} />
+      </Part>
 
-        <section className="section" aria-labelledby="projects-heading">
-          <h2 id="projects-heading" className="section-head">{tr.projects}</h2>
-          <ProjectList lang={lang} />
-        </section>
+      <Part id="rooms" title={tr.rooms}>
+        <Rooms lang={lang} />
+      </Part>
 
-        <section className="section" aria-labelledby="connect-heading">
-          <h2 id="connect-heading" className="section-head">{tr.connect}</h2>
-          <ConnectLinks tr={tr} />
-        </section>
+      <Part id="connect" title={tr.connect}>
+        <Connect tr={tr} />
+      </Part>
 
-        <section className="section" aria-labelledby="credits-heading">
-          <h2 id="credits-heading" className="section-head">
-            {tr.credits}
-            {tr.creditsNote && (
-              <span className="section-note"> ({tr.creditsNote})</span>
-            )}
-          </h2>
-          <Credits />
-        </section>
+      <Part id="voices" title={tr.voices} note={tr.voicesNote}>
+        <Credits />
+      </Part>
 
-        <p className="thanks">{tr.thanks}</p>
-
-        <footer className="foot">
-          <span>f3liz.casa</span>
-          <a href="https://github.com/nyanrus" target="_blank" rel="noreferrer">
-            {tr.madeBy}
-          </a>
-        </footer>
-      </main>
-    </div>
+      <footer className="closing">
+        <div>
+          <p className="thanks">{tr.thanks}</p>
+          <p className="signoff">
+            <a href="https://github.com/nyanrus" target="_blank" rel="noreferrer">@nyanrus</a>
+          </p>
+        </div>
+        <NappingCat />
+      </footer>
+    </main>
   );
 }
