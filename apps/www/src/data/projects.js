@@ -2,6 +2,16 @@
 // without them fall back to ja / ko through t().
 export const projects = [
   {
+    name: "karutte-wt",
+    lang: "Elixir",
+    href: "/karutte-wt/",
+    desc: {
+      en: "WebTransport over HTTP/3 for the BEAM",
+      ja: "WebTransport を、BEAM に、素直に",
+      ko: "BEAM 위의 WebTransport over HTTP/3",
+    },
+  },
+  {
     name: "natadeco",
     lang: "Elixir",
     href: "https://natadeco.com/",

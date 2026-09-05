@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>karutte-wt · f3liz.casa</title>
+<meta name="description" content="WebTransport over HTTP/3 for Elixir, on real QUIC, talking to real browsers." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* the same sheet of paper as the landing page, with one more thing on it */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  :root {
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.06);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.07); }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px;
+         line-height: 1.8; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: var(--glow); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: var(--apricot); }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
+
+  .letter { position: relative; max-width: 37rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+  .letter::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                    background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .title .soft { font-weight: 400; color: var(--ink-soft); }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.35rem; font-weight: 500; line-height: 1.55; margin-top: 2.2rem; text-wrap: balance; }
+  .status { margin-top: 1rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
+
+  .part { margin-top: 3.2rem; }
+  .part-title { font-size: .9em; font-weight: 500; color: var(--ink-soft); margin-bottom: .7rem; }
+  .part p + p { margin-top: .8rem; }
+  .three { list-style: none; }
+  .three li { padding: .5rem .6rem; margin: 0 -.6rem; border-radius: 8px; transition: background-color 160ms var(--ease); }
+  .three li:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+  .three b { font-weight: 600; }
+  .rows { list-style: none; }
+  .row { display: grid; grid-template-columns: 8.5rem 1fr; column-gap: 1.1rem; align-items: baseline;
+         padding: .35rem .5rem; margin: 0 -.5rem; border-radius: 8px; }
+  .row:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+  .row-desc { color: var(--ink-soft); }
+  pre { font-family: var(--mono); font-size: .82em; line-height: 1.6; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin-top: .6rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  .not { list-style: none; color: var(--ink-soft); }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; opacity: .6; }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--ink-soft); opacity: .5; }
+  .closing { margin-top: 4rem; font-size: .9em; color: var(--ink-soft); }
+  @media (max-width: 34rem) { .row { grid-template-columns: 1fr; row-gap: .05rem; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="letter">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <h1 class="title">karutte<span class="soft">-wt</span></h1>
+  <p class="gloss">かるって。WebTransport を、BEAM に、素直に住まわせる。</p>
+
+  <p class="wish">WebTransport over HTTP/3 for Elixir. On real QUIC, talking to real browsers.</p>
+  <p class="status"><b>experimental</b> · works end to end with Chrome · 58 tests on real QUIC · the API may still move</p>
+
+  <section class="part">
+    <h2 class="part-title">why it exists</h2>
+    <p>Elixir had no WebTransport server on the BEAM's own QUIC stack. Plug servers stop at TCP. The existing options wrap a whole Rust QUIC stack and live beside Plug rather than with it.</p>
+    <p>karutte takes the other road: <a href="https://github.com/emqx/quic">quicer</a> for QUIC, <a href="https://github.com/ninenines/cowlib">cowlib</a> for HTTP/3 framing, and only the WebTransport-specific parts written here. The runner is plain OTP, so crash isolation and backpressure fall out of the process model instead of being bolted on.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">three things a browser could not get from the BEAM before</h2>
+    <ul class="three">
+      <li><b>Datagrams.</b> Unreliable, unordered, no head-of-line blocking, about 20 ms end to end. WebSocket cannot; WebRTC can, with a whole media stack attached.</li>
+      <li><b>Many independent streams on one connection.</b> Each with its own flow control, each its own process. A slow consumer of one stream stalls nothing else. A crash in one stream handler is contained to that stream.</li>
+      <li><b>Server-initiated streams, and routing by path</b>, so one port can host several unrelated protocols and push without being asked.</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">the shape</h2>
+    <p>A session is control plane only and never touches stream bytes. A stream is one process. Backpressure has three axes that never overlap: stream creation, bytes per stream, and datagrams, which are dropped rather than queued.</p>
+<pre><code>defmodule MyApp.Echo do
+  @behaviour Karutte.WebTransport
+
+  def init(_arg, ci), do: {:ok, %{t: ci.transport, conn: ci.conn}}
+
+  def handle_stream(_stream, _dir, s),
+    do: {{:handler, MyApp.Echo.Stream, nil}, s}
+
+  def handle_datagram(bin, s) do
+    s.t.send_datagram(s.conn, bin)
+    {:ok, s}
+  end
+
+  defmodule Stream do
+    @behaviour Karutte.WebTransport.Stream
+    def init(_stream, _arg), do: {:ok, %{}, active: true}
+    def handle_in(bin, s), do: {:push, bin, s, active: true}
+    def handle_fin(s), do: {:close_write, s}
+  end
+end
+
+{Karutte.Http3.Server,
+ port: 4433, certfile: "cert.pem", keyfile: "key.pem",
+ handler: MyApp.Echo}</code></pre>
+    <p>That is a complete echo server. <code>active:</code> is the flow-control window, handed to you. Leave it out to push back on the peer.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">built on it so far</h2>
+    <ul class="rows">
+      <li class="row"><span>sukhi bridge</span><span class="row-desc">a fediverse server's live timeline, one stream per feed, so a busy feed never delays a quiet one</span></li>
+      <li class="row"><span>heya (部屋)</span><span class="row-desc">an audio-only room opened from a Zulip call link. Opus over datagrams, one process per voice, a room that never looks at the bytes</span></li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">what it is not, yet</h2>
+    <ul class="not">
+      <li>not for Safari, whose WebTransport support is new and untested here</li>
+      <li>not behind Cloudflare, which does not proxy WebTransport; UDP has to reach the box</li>
+      <li>not a web server: anything but CONNECT is a 404. Serve pages from Bandit next to it</li>
+      <li>not inside Plug or Phoenix. The seam is sketched; the Bandit side is the next real project</li>
+      <li>not load-tested at scale. Hundreds of connections are tested, thousands are not</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">go</h2>
+    <ul class="inline-links">
+      <li><a href="https://github.com/f3liz-casa/karutte-wt" target="_blank" rel="noreferrer">source on GitHub</a></li>
+      <li><a href="https://github.com/f3liz-casa/karutte-wt#quick-start-an-echo-server-you-can-reach-from-chrome" target="_blank" rel="noreferrer">quick start</a></li>
+      <li><a href="https://github.com/f3liz-casa/karutte-wt/blob/main/IDEAS.md" target="_blank" rel="noreferrer">what could be built</a></li>
+    </ul>
+    <p class="status">Needs Elixir 1.17+, and a C toolchain for quicer (cmake, ninja, OpenSSL headers). The first build takes a few minutes.</p>
+  </section>
+
+  <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. If something here is a misreading, please say so.</p>
+</main>
+</body>
+</html>

@@ -10,6 +10,7 @@ export default defineConfig({
         main: resolve(import.meta.dirname, "index.html"),
         yukariRubi: resolve(import.meta.dirname, "yukari-rubi/index.html"),
         yukariRubiPrivacy: resolve(import.meta.dirname, "yukari-rubi/privacy/index.html"),
+        karutteWt: resolve(import.meta.dirname, "karutte-wt/index.html"),
       },
     },
   },
