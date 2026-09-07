@@ -46,9 +46,9 @@ export const projects = [
     lang: "TypeScript",
     href: "/noraneko/",
     desc: {
-      en: "a Firefox with its front in TypeScript, built in artifact mode. the testbed for Floorp 12",
-      ja: "前面を TypeScript で書いた Firefox、artifact mode で。Floorp 12 の試験台",
-      ko: "앞면을 TypeScript로 쓴 Firefox, artifact mode로. Floorp 12의 시험대",
+      en: "a Firefox with its front in TypeScript, built in artifact mode. Floorp 12 runs on it",
+      ja: "前面を TypeScript で書いた Firefox、artifact mode で。Floorp 12 はこれの上で動く",
+      ko: "앞면을 TypeScript로 쓴 Firefox, artifact mode로. Floorp 12가 이 위에서 돈다",
     },
   },
   {

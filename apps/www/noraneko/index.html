@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>noraneko · f3liz.casa</title>
-<meta name="description" content="A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. The testbed that Floorp 12 grew out of." />
+<meta name="description" content="A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. Floorp 12 runs on it today." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -100,14 +100,14 @@
   <h1 class="title">noraneko</h1>
   <p class="gloss">のらねこ。Firefox の上に、すこしの TypeScript。</p>
 
-  <p class="wish">A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. The testbed that Floorp 12 grew out of.</p>
-  <p class="status"><b>experimental</b> · since March 2024 · Deno + Vite + Preact, on Firefox · daily runtime builds for Linux and Windows · MPL-2.0</p>
+  <p class="wish">A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. Floorp 12 runs on it today.</p>
+  <p class="status"><b>shipping inside Floorp 12</b>, as noraneko 0.2.0 · since March 2024 · Deno + Vite + Preact, on Firefox · daily runtime builds for Linux and Windows · MPL-2.0</p>
 
   <div class="slips">
     <section class="slip tamago wide">
       <h2 class="slip-title">why it exists</h2>
       <p>To change how a browser feels without compiling a browser. Firefox has an <i>artifact mode</i>: fetch a finished engine from Mozilla's build servers and build only the front end on top. noraneko takes that seriously. There is no C++ in the tree, the UI is TypeScript bundled by Vite, and a development build with hot reload comes up in minutes rather than hours.</p>
-      <p>It started as a stray cat, a place to try things that were too rough for a browser people use. <a href="https://floorp.app/">Floorp 12</a> then took the same shape, a UI repository on top of a separate runtime, and noraneko became its testbed: what works here goes there.</p>
+      <p>It started as a stray cat, a place to try things that were too rough for a browser people use. Then <a href="https://floorp.app/">Floorp 12</a> was rebuilt on it: Floorp's UI repository is noraneko 0.2.0 with Floorp's features and branding on top, and its runtime is built the same way. So the stray cat is, today, the frame under a browser that people do use. noraneko itself stays the rough copy, where the next thing is tried first.</p>
     </section>
 
     <section class="slip sakura">
@@ -154,10 +154,10 @@
     <section class="slip wide">
       <h2 class="slip-title">what it is not</h2>
       <ul class="not">
-        <li>not a browser to live in. It says "Experimental!" at the top of its README and means it. Use Floorp for that</li>
+        <li>not a browser to live in. It says "Experimental!" at the top of its README and means it. Floorp 12 is the same frame, finished; live there</li>
         <li>not a fork of the engine. The runtime's patches are branding, packaging and a few build fixes; rendering, networking and security are Mozilla's, unchanged</li>
         <li>not finished. The loader was rewired in August 2026 and part of that still lives on a branch, and the macOS release path is being brought up</li>
-        <li>not a product. It is where things are tried. The polished version of an idea from here shows up in Floorp, not in noraneko</li>
+        <li>not a product by itself. It is where things are tried. The polished version of an idea from here ships in Floorp, not under the noraneko name</li>
       </ul>
     </section>
 
