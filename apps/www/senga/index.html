@@ -9,73 +9,100 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  /* the same sheet of paper as the landing page, with one more thing on it */
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
   *, *::before, *::after { box-sizing: border-box; }
   * { margin: 0; padding: 0; }
   :root {
     color-scheme: light dark;
     --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
-    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.06); --apricot-ink: #b86a2e;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
     --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
     --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
   }
   @media (prefers-color-scheme: dark) {
     :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
-            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.07); --apricot-ink: #f0b07c; }
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
   }
   html { -webkit-text-size-adjust: 100%; }
-  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px;
-         line-height: 1.8; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
-      text-decoration-color: var(--glow); text-underline-offset: .18em; border-radius: 3px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
       transition: text-decoration-color 160ms var(--ease); }
-  a:hover { text-decoration-color: var(--apricot); }
+  a:hover { text-decoration-color: currentColor; }
   :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
 
-  .letter { position: relative; max-width: 37rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
-  .letter::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
-                    background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
   .eyebrow { font-size: .85em; color: var(--ink-soft); }
   .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
-  .title .soft { font-weight: 400; color: var(--ink-soft); }
   .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
-  .wish { font-size: 1.35rem; font-weight: 500; line-height: 1.55; margin-top: 2.2rem; text-wrap: balance; }
-  .status { margin-top: 1rem; font-size: .92em; color: var(--ink-soft); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
   .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
 
-  .part { margin-top: 3.2rem; }
-  .part-title { font-size: .9em; font-weight: 500; color: var(--ink-soft); margin-bottom: .7rem; }
-  .part p + p { margin-top: .8rem; }
-  .three { list-style: none; }
-  .three li { padding: .5rem .6rem; margin: 0 -.6rem; border-radius: 8px; transition: background-color 160ms var(--ease); }
-  .three li:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
-  .three b { font-weight: 600; }
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  .title .soft { font-weight: 400; color: var(--ink-soft); }
   .rows { list-style: none; }
-  .row { display: grid; grid-template-columns: 8.5rem 1fr; column-gap: 1.1rem; align-items: baseline;
-         padding: .35rem .5rem; margin: 0 -.5rem; border-radius: 8px; }
-  .row:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
-  .row-desc { color: var(--ink-soft); }
-  pre { font-family: var(--mono); font-size: .82em; line-height: 1.6; background: var(--code); border-radius: 10px;
-        padding: .9rem 1.1rem; overflow-x: auto; margin-top: .6rem; }
+  .row { display: grid; grid-template-columns: 7.5rem 1fr; column-gap: 1rem; align-items: baseline; padding: .3rem 0; }
+  .row-desc { opacity: .85; }
+  pre .m { color: var(--ink); font-weight: 600; }
+  pre .a { color: var(--hue); }
+  pre .s { color: var(--hue); background: linear-gradient(transparent 60%, color-mix(in srgb, var(--hue) 18%, transparent) 60%); }
+
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
   code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
   pre code { background: none; padding: 0; font-size: 1em; }
-  /* the wireframe is a drawing, so it keeps its lines even on a narrow screen */
-  pre.wire { font-size: .72em; line-height: 1.25; white-space: pre; }
-  pre .k { color: var(--ink-soft); }
-  pre .a { font-weight: 600; }
-  .not { list-style: none; color: var(--ink-soft); }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
   .not li { padding: .15rem 0; }
-  .not li::before { content: "·"; margin-right: .6em; opacity: .6; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
   .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
-  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--ink-soft); opacity: .5; }
-  .closing { margin-top: 4rem; font-size: .9em; color: var(--ink-soft); }
-  @media (max-width: 34rem) { .row { grid-template-columns: 1fr; row-gap: .05rem; } .title { font-size: 2rem; } }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
+
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .row { grid-template-columns: 1fr; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-<main class="letter">
+<main class="table">
   <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
   <h1 class="title">senga</h1>
   <p class="gloss">線画。ページの形を、線と数字で。</p>
@@ -83,15 +110,21 @@
   <p class="wish">HTML+CSS in, text out. A page renderer for readers that measure better than they see.</p>
   <p class="status"><b>working</b> · one binary, Servo inside · about three seconds a page · Rust, MIT</p>
 
-  <section class="part">
-    <h2 class="part-title">why it exists</h2>
-    <p>An AI reading a screenshot cannot tell 4 px from 8 px, nor a contrast of 3.9:1 from 4.5:1. Neither can a tired person at midnight. But both can read a number.</p>
+  <div class="slips">
+    <section class="slip tamago wide">
+      <h2 class="slip-title">why it exists</h2>
+      <p>An AI reading a screenshot cannot tell 4 px from 8 px, nor a contrast of 3.9:1 from 4.5:1. Neither can a tired person at midnight. But both can read a number.</p>
     <p>senga lets <a href="https://servo.org/">Servo</a> lay the page out, asks it where every box landed, and writes that down: a wireframe for the shape, a list for the numbers, and a short list of the things a pair of eyes would have caught. It was built so that Shiro could look at the pages it writes without borrowing anyone's eyes.</p>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">what comes out</h2>
-    <p>A small board page with a few faults planted in it, at 800 px wide:</p>
+    <section class="slip sakura">
+      <h2 class="slip-title">three small things it does</h2>
+      <p>It reads the console, it compares against a real browser, and it keeps the engine out of the renderer. One slip for each, further down.</p>
+    </section>
+
+    <section class="slip sora full">
+      <h2 class="slip-title">what comes out</h2>
+      <p>A small board page with a few faults planted in it, at 800 px wide:</p>
 <pre class="wire"><code>┌header─────────────────────────────────────────────────────────┐
 │ ·a·····                                                  ·a·· │
 │ ·······                                                  ···· │
@@ -128,36 +161,43 @@
 - 1 image(s) without an alt attribute.
 - Targets under 24 px: `a` 70×16, `a.dim` 34×14.</code></pre>
     <p>Below that, one line per element with position, size, font size, colour and the contrast against what is really behind it (a half-transparent veil over white is grey, not black), and a palette of the font sizes, colours and spacing actually in use, with a note on what falls off the 4 px grid.</p>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">three small things it does</h2>
-    <ul class="three">
-      <li><b>Reads the console.</b> When the wireframe comes out empty, the reason is usually one error line the page logged while starting. senga prints it under the report. That is how it found that Servo ships with WebCrypto off.</li>
-      <li><b>Compares against a real browser.</b> Hand it a Chrome screenshot of the same viewport and it reports, per 100 px band, how many pixels differ. Font rendering stays under a few percent everywhere; a band that jumps is where two layouts disagree. On servo.org the whole page differs by 4.5%, all of it font rendering but one word that wraps a line earlier in Chrome.</li>
-      <li><b>Keeps the engine out of the renderer.</b> The page side hands over a small JSON dump; the text side knows nothing about Servo. A Playwright script that runs the same extraction in Firefox would feed it too.</li>
-    </ul>
-  </section>
+    <section class="slip wakaba">
+      <h2 class="slip-title">reads the console</h2>
+      <p>When the wireframe comes out empty, the reason is usually one error line the page logged while starting. senga prints it under the report. That is how it found that Servo ships with WebCrypto off.</p>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">what it is not</h2>
-    <ul class="not">
+    <section class="slip fuji">
+      <h2 class="slip-title">compares against a real browser</h2>
+      <p>Hand it a Chrome screenshot of the same viewport and it reports, per 100 px band, how many pixels differ. Font rendering stays under a few percent everywhere; a band that jumps is where two layouts disagree. On servo.org the whole page differs by 4.5%, all of it font rendering but one word that wraps a line earlier in Chrome.</p>
+    </section>
+
+    <section class="slip momo">
+      <h2 class="slip-title">keeps the engine out of the renderer</h2>
+      <p>The page side hands over a small JSON dump; the text side knows nothing about Servo. A Playwright script that runs the same extraction in Firefox would feed it too.</p>
+    </section>
+
+    <section class="slip wide">
+      <h2 class="slip-title">what it is not</h2>
+      <ul class="not">
       <li>not Firefox or Chrome. Servo's CSS is real but not complete, and its fonts differ, so line breaks can drift by a few pixels. Confirm the final look where people look</li>
       <li>not a judge. A page can pass every finding and still be ugly, and a 2.3:1 title can be the right call for a wordmark. It measures</li>
       <li>not small to build. The first build compiles SpiderMonkey and all of Servo, about ten minutes and a few gigabytes. After that, seconds</li>
       <li>not tried on Linux yet. macOS on Apple Silicon is where it lives so far</li>
     </ul>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">go</h2>
-    <ul class="inline-links">
+    <section class="slip wakaba go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
       <li><a href="https://github.com/f3liz-casa/senga" target="_blank" rel="noreferrer">source on GitHub</a></li>
       <li><a href="https://github.com/f3liz-casa/senga#readme" target="_blank" rel="noreferrer">how to read the output</a></li>
       <li><a href="https://github.com/f3liz-casa/senga/blob/main/docs/layout-dump.md" target="_blank" rel="noreferrer">the layout dump</a></li>
     </ul>
     <p class="status">Needs Rust, a shallow clone of Servo next to it (<code>scripts/fetch-servo.sh</code> does that), and on macOS <code>cmake</code> and <code>pkg-config</code>.</p>
-  </section>
+    </section>
+  </div>
 
   <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. This page was checked with senga before it went up. If something here is a misreading, please say so.</p>
 </main>

@@ -9,74 +9,100 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  /* the same sheet of paper as the landing page, with one more thing on it */
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
   *, *::before, *::after { box-sizing: border-box; }
   * { margin: 0; padding: 0; }
   :root {
     color-scheme: light dark;
     --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
-    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.06); --apricot-ink: #b86a2e;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
     --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
     --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
   }
   @media (prefers-color-scheme: dark) {
     :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
-            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.07); --apricot-ink: #f0b07c; }
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
   }
   html { -webkit-text-size-adjust: 100%; }
-  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px;
-         line-height: 1.8; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
-      text-decoration-color: var(--glow); text-underline-offset: .18em; border-radius: 3px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
       transition: text-decoration-color 160ms var(--ease); }
-  a:hover { text-decoration-color: var(--apricot); }
+  a:hover { text-decoration-color: currentColor; }
   :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
 
-  .letter { position: relative; max-width: 37rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
-  .letter::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
-                    background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
   .eyebrow { font-size: .85em; color: var(--ink-soft); }
   .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
-  .title .soft { font-weight: 400; color: var(--ink-soft); }
   .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
-  .wish { font-size: 1.35rem; font-weight: 500; line-height: 1.55; margin-top: 2.2rem; text-wrap: balance; }
-  .status { margin-top: 1rem; font-size: .92em; color: var(--ink-soft); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
   .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
 
-  .part { margin-top: 3.2rem; }
-  .part-title { font-size: .9em; font-weight: 500; color: var(--ink-soft); margin-bottom: .7rem; }
-  .part p + p { margin-top: .8rem; }
-  .three { list-style: none; }
-  .three li { padding: .5rem .6rem; margin: 0 -.6rem; border-radius: 8px; transition: background-color 160ms var(--ease); }
-  .three li:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
-  .three b { font-weight: 600; }
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  .title .soft { font-weight: 400; color: var(--ink-soft); }
   .rows { list-style: none; }
-  .row { display: grid; grid-template-columns: 8.5rem 1fr; column-gap: 1.1rem; align-items: baseline;
-         padding: .35rem .5rem; margin: 0 -.5rem; border-radius: 8px; }
-  .row:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
-  .row-desc { color: var(--ink-soft); }
-  pre { font-family: var(--mono); font-size: .82em; line-height: 1.6; background: var(--code); border-radius: 10px;
-        padding: .9rem 1.1rem; overflow-x: auto; margin-top: .6rem; }
+  .row { display: grid; grid-template-columns: 7.5rem 1fr; column-gap: 1rem; align-items: baseline; padding: .3rem 0; }
+  .row-desc { opacity: .85; }
+  pre .m { color: var(--ink); font-weight: 600; }
+  pre .a { color: var(--hue); }
+  pre .s { color: var(--hue); background: linear-gradient(transparent 60%, color-mix(in srgb, var(--hue) 18%, transparent) 60%); }
+
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
   code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
   pre code { background: none; padding: 0; font-size: 1em; }
-  /* a little ink of a second colour, for the code: keywords step back, names stay, atoms and strings warm up */
-  pre .k { color: var(--ink-soft); }
-  pre .m { color: var(--ink); font-weight: 600; }
-  pre .a { color: var(--apricot-ink); }
-  pre .s { color: var(--apricot-ink); background: linear-gradient(transparent 60%, var(--glow) 60%); }
-  .not { list-style: none; color: var(--ink-soft); }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
   .not li { padding: .15rem 0; }
-  .not li::before { content: "·"; margin-right: .6em; opacity: .6; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
   .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
-  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--ink-soft); opacity: .5; }
-  .closing { margin-top: 4rem; font-size: .9em; color: var(--ink-soft); }
-  @media (max-width: 34rem) { .row { grid-template-columns: 1fr; row-gap: .05rem; } .title { font-size: 2rem; } }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
+
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .row { grid-template-columns: 1fr; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-<main class="letter">
+<main class="table">
   <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
   <h1 class="title">karutte<span class="soft">-wt</span></h1>
   <p class="gloss">かるって。WebTransport を、BEAM に、素直に住まわせる。</p>
@@ -84,24 +110,36 @@
   <p class="wish">WebTransport over HTTP/3 for Elixir. On real QUIC, talking to real browsers.</p>
   <p class="status"><b>experimental</b> · works end to end with Chrome · 58 tests on real QUIC · the API may still move</p>
 
-  <section class="part">
-    <h2 class="part-title">why it exists</h2>
-    <p>Elixir had no WebTransport server on the BEAM's own QUIC stack. Plug servers stop at TCP. The existing options wrap a whole Rust QUIC stack and live beside Plug rather than with it.</p>
+  <div class="slips">
+    <section class="slip tamago wide">
+      <h2 class="slip-title">why it exists</h2>
+      <p>Elixir had no WebTransport server on the BEAM's own QUIC stack. Plug servers stop at TCP. The existing options wrap a whole Rust QUIC stack and live beside Plug rather than with it.</p>
     <p>karutte takes the other road: <a href="https://github.com/emqx/quic">quicer</a> for QUIC, <a href="https://github.com/ninenines/cowlib">cowlib</a> for HTTP/3 framing, and only the WebTransport-specific parts written here. The runner is plain OTP, so crash isolation and backpressure fall out of the process model instead of being bolted on.</p>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">three things a browser could not get from the BEAM before</h2>
-    <ul class="three">
-      <li><b>Datagrams.</b> Unreliable, unordered, no head-of-line blocking, about 20 ms end to end. WebSocket cannot; WebRTC can, with a whole media stack attached.</li>
-      <li><b>Many independent streams on one connection.</b> Each with its own flow control, each its own process. A slow consumer of one stream stalls nothing else. A crash in one stream handler is contained to that stream.</li>
-      <li><b>Server-initiated streams, and routing by path</b>, so one port can host several unrelated protocols and push without being asked.</li>
-    </ul>
-  </section>
+    <section class="slip sakura">
+      <h2 class="slip-title">three things a browser could not get from the BEAM before</h2>
+      <p>Datagrams, many independent streams on one connection, and streams the server opens itself. One slip for each, below.</p>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">the shape</h2>
-    <p>A session is control plane only and never touches stream bytes. A stream is one process. Backpressure has three axes that never overlap: stream creation, bytes per stream, and datagrams, which are dropped rather than queued.</p>
+    <section class="slip wakaba">
+      <h2 class="slip-title">datagrams</h2>
+      <p>Unreliable, unordered, no head-of-line blocking, about 20 ms end to end. WebSocket cannot; WebRTC can, with a whole media stack attached.</p>
+    </section>
+
+    <section class="slip fuji">
+      <h2 class="slip-title">many independent streams on one connection</h2>
+      <p>Each with its own flow control, each its own process. A slow consumer of one stream stalls nothing else. A crash in one stream handler is contained to that stream.</p>
+    </section>
+
+    <section class="slip momo">
+      <h2 class="slip-title">server-initiated streams, and routing by path</h2>
+      <p>, so one port can host several unrelated protocols and push without being asked.</p>
+    </section>
+
+    <section class="slip sora full">
+      <h2 class="slip-title">the shape</h2>
+      <p>A session is control plane only and never touches stream bytes. A stream is one process. Backpressure has three axes that never overlap: stream creation, bytes per stream, and datagrams, which are dropped rather than queued.</p>
 <pre><code><span class="k">defmodule</span> <span class="m">MyApp.Echo</span> <span class="k">do</span>
   <span class="k">@behaviour</span> <span class="m">Karutte.WebTransport</span>
 
@@ -128,36 +166,37 @@
  <span class="a">port:</span> 4433, <span class="a">certfile:</span> <span class="s">"cert.pem"</span>, <span class="a">keyfile:</span> <span class="s">"key.pem"</span>,
  <span class="a">handler:</span> <span class="m">MyApp.Echo</span>}</code></pre>
     <p>That is a complete echo server. <code>active:</code> is the flow-control window, handed to you. Leave it out to push back on the peer.</p>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">built on it so far</h2>
-    <ul class="rows">
+    <section class="slip momo">
+      <h2 class="slip-title">built on it so far</h2>
+      <ul class="rows">
       <li class="row"><span>sukhi bridge</span><span class="row-desc">a fediverse server's live timeline, one stream per feed, so a busy feed never delays a quiet one</span></li>
       <li class="row"><span>heya (部屋)</span><span class="row-desc">an audio-only room opened from a Zulip call link. Opus over datagrams, one process per voice, a room that never looks at the bytes</span></li>
     </ul>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">what it is not, yet</h2>
-    <ul class="not">
+    <section class="slip wide">
+      <h2 class="slip-title">what it is not, yet</h2>
+      <ul class="not">
       <li>not for Safari, whose WebTransport support is new and untested here</li>
       <li>not behind Cloudflare, which does not proxy WebTransport; UDP has to reach the box</li>
       <li>not a web server: anything but CONNECT is a 404. Serve pages from Bandit next to it</li>
       <li>not inside Plug or Phoenix. The seam is sketched; the Bandit side is the next real project</li>
       <li>not load-tested at scale. Hundreds of connections are tested, thousands are not</li>
     </ul>
-  </section>
+    </section>
 
-  <section class="part">
-    <h2 class="part-title">go</h2>
-    <ul class="inline-links">
+    <section class="slip wakaba full go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
       <li><a href="https://github.com/f3liz-casa/karutte-wt" target="_blank" rel="noreferrer">source on GitHub</a></li>
       <li><a href="https://github.com/f3liz-casa/karutte-wt/blob/main/core/README.md#quick-start-an-echo-server-you-can-reach-from-chrome" target="_blank" rel="noreferrer">quick start</a></li>
       <li><a href="https://github.com/f3liz-casa/karutte-wt/blob/main/IDEAS.md" target="_blank" rel="noreferrer">what could be built</a></li>
     </ul>
     <p class="status">Needs Elixir 1.17+, and a C toolchain for quicer (cmake, ninja, OpenSSL headers). The first build takes a few minutes.</p>
-  </section>
+    </section>
+  </div>
 
   <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. If something here is a misreading, please say so.</p>
 </main>
