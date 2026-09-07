@@ -3,287 +3,221 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>privacy policy · yukari-rubi · f3liz.casa</title>
-<meta name="description" content="Privacy policy for the yukari-rubi browser extension." />
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;500;700&family=Nanum+Gothic:wght@400;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
+<title>privacy · yukari-rubi · f3liz.casa</title>
+<meta name="description" content="What the yukari-rubi browser add-on does with what it sees: nothing leaves your browser." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&family=BIZ+UDPGothic:wght@400;700&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet" />
 <style>
+  /* the same slips of pastel as the yukari-rubi page, but a policy is read top to bottom, so they stack in one column */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
   :root {
-    /* f3liz.casa tokens */
     color-scheme: light dark;
-    --surface: #f5f3ee;
-    --surface-raised: #ffffff;
-    --ink: rgb(45, 45, 43);
-    --ink-soft: #5b5b58;
-    --ink-muted: #8e8e88;
-    --line: #e5e2da;
-    --surface-sunken: #ececea;
-    --warm: #d97a3c;
-    --warm-soft: #fdf1e6;
-    --warm-ink: #b85f24;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
   }
-
   @media (prefers-color-scheme: dark) {
-    :root {
-      --surface: #16161a;
-      --surface-raised: #1d1d22;
-      --ink: #e8e6e0;
-      --ink-soft: #c2beb5;
-      --ink-muted: #9a968e;
-      --line: rgba(232, 230, 224, 0.12);
-      --surface-sunken: #232328;
-      --warm-soft: #2a2118;
-      --warm-ink: #e0a165;
-    }
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
   }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: currentColor; }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--surface); }
-  body {
-    color: var(--ink);
-    font-family: "BIZ UDPGothic", "Nunito Sans", "Nanum Gothic", system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-  html[data-lang="en"] body { font-family: "Nunito Sans", "BIZ UDPGothic", system-ui, sans-serif; }
-  html[data-lang="ko"] body { font-family: "Nanum Gothic", "BIZ UDPGothic", system-ui, sans-serif; }
+  .table { position: relative; max-width: 46rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .head { display: flex; align-items: center; gap: 1rem; margin-top: .3rem; }
+  .head img { width: 3.4rem; height: 3.4rem; border-radius: 12px; }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
 
-  .topbar-logo, .lang-btn, .page-title, .section-head {
-    font-family: "BIZ UDPGothic", "Nunito Sans", "Nanum Gothic", system-ui, sans-serif;
-  }
-
-  a { color: inherit; text-decoration: none; }
-
-  .topbar {
-    background: var(--surface-raised);
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 1.75rem; min-height: 52px;
-    position: sticky; top: 0; z-index: 10;
-  }
-  .topbar-logo { font-size: 15px; font-weight: 500; white-space: nowrap; }
-  .topbar-logo a { color: var(--ink); font-weight: 500; }
-  .topbar-logo a:hover { color: var(--warm-ink); }
-  .topbar-logo .slug { color: var(--ink-muted); font-weight: 300; }
-
-  .lang-row { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
-  .lang-btn {
-    background: none; border: 1px solid transparent;
-    padding: 4px 10px;
-    color: var(--ink-muted);
-    font-size: 12px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .lang-btn:hover { color: var(--ink); background: var(--surface-sunken); }
-  .lang-btn[aria-pressed="true"] {
-    color: var(--ink);
-    background: var(--surface-sunken);
-    border-color: var(--line);
-  }
-
-  @media (max-width: 540px) {
-    .topbar { padding: 0.75rem 1.25rem; }
-  }
-
-  main { max-width: 620px; margin: 0 auto; padding: 24px 32px 80px; }
-
-  .page-title {
-    font-size: 32px; font-weight: 700;
-    letter-spacing: -0.01em; line-height: 1.2;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .updated {
-    font-size: 13px;
-    color: var(--ink-muted);
-    margin-bottom: 28px;
-  }
-
-  .card {
-    background: var(--surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 20px 22px;
-  }
-  .card p { margin: 0 0 10px; color: var(--ink); font-size: 15px; }
-  .card p:last-child { margin-bottom: 0; }
-
-  .divider {
-    height: 1px; background: var(--line);
-    margin: 32px 0 24px;
-  }
-
-  .section-head {
-    font-size: 12px; letter-spacing: 0.18em;
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  .prose p { margin: 0 0 14px; color: var(--ink-soft); font-size: 15px; }
-  .prose p:last-child { margin-bottom: 0; }
-  .prose ul { margin: 0 0 14px; padding-left: 1.2em; color: var(--ink-soft); font-size: 15px; }
-  .prose li { margin-bottom: 6px; }
-  .prose li:last-child { margin-bottom: 0; }
-  .prose strong { color: var(--ink); font-weight: 600; }
-
+  .slips { display: grid; gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p, .slip ul + p, .slip p + ul { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  html[data-lang="ja"] body { font-family: 'Zen Maru Gothic', 'BIZ UDPGothic', var(--font); }
+  html[data-lang="ko"] body { font-family: 'Nanum Gothic', 'Zen Maru Gothic', var(--font); }
   [data-l] { display: none !important; }
-  html[data-lang="en"] [data-l="en"],
-  html[data-lang="ja"] [data-l="ja"],
-  html[data-lang="ko"] [data-l="ko"] { display: revert !important; }
-  html[data-lang="en"] p[data-l="en"], html[data-lang="en"] ul[data-l="en"],
-  html[data-lang="ja"] p[data-l="ja"], html[data-lang="ja"] ul[data-l="ja"],
-  html[data-lang="ko"] p[data-l="ko"], html[data-lang="ko"] ul[data-l="ko"] { display: block !important; }
+  html[data-lang="en"] [data-l="en"], html[data-lang="ja"] [data-l="ja"], html[data-lang="ko"] [data-l="ko"] { display: revert !important; }
+  html[data-lang="en"] p[data-l="en"], html[data-lang="ja"] p[data-l="ja"], html[data-lang="ko"] p[data-l="ko"] { display: block !important; }
+  html[data-lang="en"] ul[data-l="en"], html[data-lang="ja"] ul[data-l="ja"], html[data-lang="ko"] ul[data-l="ko"] { display: block !important; }
+  html[data-lang="en"] li[data-l="en"], html[data-lang="ja"] li[data-l="ja"], html[data-lang="ko"] li[data-l="ko"] { display: list-item !important; }
+  .voices { display: flex; gap: .2rem; margin-top: 1.4rem; }
+  .voices button { font: inherit; font-size: .9em; color: var(--ink-soft); background: none; border: 0; padding: .1rem .5rem;
+                   border-radius: 6px; cursor: pointer; }
+  .voices button[aria-pressed="true"] { color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); }
 
-  .foot {
-    margin-top: 56px;
-    display: flex; justify-content: space-between;
-    color: var(--ink-muted); font-size: 12px;
-    letter-spacing: 0.04em;
-  }
-  .foot a { color: var(--ink-muted); }
-  .foot a:hover { color: var(--ink); }
+  /* the permission list: each line names the permission, then says why it is there */
+  .why { list-style: none; }
+  .why li { padding: .35rem 0; }
+  .why li + li { border-top: 1px solid color-mix(in srgb, var(--hue) 18%, transparent); }
+  .not { list-style: none; }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
+
+  @media (max-width: 36rem) { .head img { width: 2.8rem; height: 2.8rem; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-
-<header class="topbar">
-  <div class="topbar-logo">
-    <a href="https://f3liz.casa">f3liz.casa</a><span class="slug">/<a href="/yukari-rubi/">yukari-rubi</a>/privacy</span>
+<main class="table">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · <a href="/yukari-rubi/">yukari-rubi</a> · privacy</p>
+  <div class="head">
+    <img src="../logo.png" alt="" width="56" height="56" />
+    <h1 class="title"><span data-l="en">privacy</span><span data-l="ja">プライバシーポリシー</span><span data-l="ko">개인정보 처리방침</span></h1>
   </div>
-  <div class="lang-row">
-    <button class="lang-btn" data-set-lang="en" aria-pressed="true">en</button>
-    <button class="lang-btn" data-set-lang="ja" aria-pressed="false">ja</button>
-    <button class="lang-btn" data-set-lang="ko" aria-pressed="false">ko</button>
-  </div>
-</header>
+  <p class="gloss">ゆかりルビは、あなたのことを、何も持って帰りません。</p>
 
-<main>
+  <p class="wish" data-l="en">yukari-rubi doesn't collect, send, or share anything. It reads the page you're looking at to put furigana on it, all inside your browser, and nothing leaves your device.</p>
+  <p class="wish" data-l="ja">ゆかりルビは、何も集めず、送らず、誰にも渡しません。見ているページの文字を読んでふりがなを付ける仕事は、ぜんぶブラウザの中で終わります。あなたの端末の外に出ていくものは、ありません。</p>
+  <p class="wish" data-l="ko">유카리 루비는 아무것도 모으지 않고, 보내지 않고, 누구에게도 넘기지 않아요. 보고 있는 페이지의 글자를 읽어 후리가나를 다는 일은 전부 브라우저 안에서 끝나요. 기기 밖으로 나가는 건 없어요.</p>
+  <p class="status">
+    <span data-l="en"><b>in effect since July 14, 2026</b> · wording refreshed September 7, 2026</span>
+    <span data-l="ja"><b>施行日: 2026年7月14日</b> · 文面を整えた日: 2026年9月7日</span>
+    <span data-l="ko"><b>시행일: 2026년 7월 14일</b> · 문장을 다듬은 날: 2026년 9월 7일</span>
+  </p>
 
-  <div class="page-title" data-l="en">Privacy Policy</div>
-  <div class="page-title" data-l="ja">プライバシーポリシー</div>
-  <div class="page-title" data-l="ko">개인정보처리방침</div>
-  <div class="updated">
-    <span data-l="en">Last updated: July 14, 2026</span>
-    <span data-l="ja">最終更新日：2026年7月14日</span>
-    <span data-l="ko">최종 수정일: 2026년 7월 14일</span>
-  </div>
-
-  <div class="card">
-    <p data-l="en"><strong>Short version:</strong> yukari-rubi doesn't collect, transmit, or share anything. It reads the text on the page you're viewing to add furigana, entirely inside your own browser, and nothing ever leaves your device.</p>
-    <p data-l="ja"><strong>要点:</strong> ゆかりルビは、何も収集せず、送信せず、共有しません。表示中のページの文字を読み取ってふりがなを付ける処理はすべてブラウザ内で完結し、あなたの端末の外に何かが送られることはありません。</p>
-    <p data-l="ko"><strong>요약:</strong> 유카리 루비는 아무것도 수집하거나 전송하거나 공유하지 않습니다. 보고 있는 페이지의 텍스트를 읽어 후리가나를 표시하는 처리는 전부 브라우저 안에서만 이루어지며, 어떤 정보도 기기 밖으로 나가지 않습니다.</p>
+  <div class="voices" role="group" aria-label="language">
+    <button data-set-lang="en" aria-pressed="true">en</button>
+    <button data-set-lang="ja" aria-pressed="false">ja</button>
+    <button data-set-lang="ko" aria-pressed="false">ko</button>
   </div>
 
-  <div class="divider"></div>
+  <div class="slips">
+    <section class="slip tamago">
+      <h2 class="slip-title"><span data-l="en">who is writing this</span><span data-l="ja">これを書いている人</span><span data-l="ko">이걸 쓰는 사람</span></h2>
+      <p data-l="en">yukari-rubi is a small add-on made by one person, <a href="https://misskey.io/@nyanrus">nyanrus</a>, living in Korea. There is no company behind it. So this page is just me writing down, honestly, what the add-on does with what it sees.</p>
+      <p data-l="ja">ゆかりルビは、韓国に住んでいる一人(<a href="https://misskey.io/@nyanrus">nyanrus</a>)が作っている小さなアドオンです。うしろに会社はありません。だからこのページも、アドオンが見たものをどう扱っているか、私が正直に書いておく、それだけのものです。</p>
+      <p data-l="ko">유카리 루비는 한국에 사는 한 사람(<a href="https://misskey.io/@nyanrus">nyanrus</a>)이 만드는 작은 확장 기능이에요. 뒤에 회사는 없어요. 그래서 이 페이지도, 확장 기능이 본 것을 어떻게 다루는지 제가 솔직하게 적어두는, 그것뿐이에요.</p>
+    </section>
 
-  <div class="section-head" data-l="en">what it does</div>
-  <div class="section-head" data-l="ja">やっていること</div>
-  <div class="section-head" data-l="ko">하는 일</div>
-  <div class="prose">
-    <p data-l="en">When you turn furigana on for a page, the extension scans the visible text and runs it through a Japanese morphological analyzer (Sudachi, compiled to WebAssembly) to work out readings, then overlays them as ruby text. This all happens inside the extension's own background process — no page content is ever sent to a server, ours or anyone else's.</p>
-    <p data-l="ja">ページでふりがなをオンにすると、拡張機能は表示されている文字を読み取り、日本語形態素解析器（Sudachi、WebAssemblyでコンパイル）にかけて読みを求め、ルビとして重ねて表示します。これはすべて拡張機能自身のバックグラウンド処理の中で行われ、ページの内容がどこかのサーバー（弊社のものも、他社のものも）に送られることはありません。</p>
-    <p data-l="ko">페이지에서 후리가나를 켜면, 확장 기능은 화면에 보이는 텍스트를 읽어 일본어 형태소 분석기(Sudachi, WebAssembly로 컴파일)에 넣어 읽는 법을 계산한 뒤 루비(후리가나)로 겹쳐 표시합니다. 이 모든 과정은 확장 기능 자체의 백그라운드 처리 안에서 이루어지며, 페이지 내용이 어딘가의 서버(저희 것이든 다른 곳이든)로 전송되는 일은 없습니다.</p>
+    <section class="slip sakura">
+      <h2 class="slip-title"><span data-l="en">what it does</span><span data-l="ja">やっていること</span><span data-l="ko">하는 일</span></h2>
+      <p data-l="en">When you turn furigana on, the add-on reads the visible text of the page, works out the readings with a Japanese morphological analyzer (Sudachi, compiled to WebAssembly), and lays them over the kanji as ruby. All of that happens in the add-on's own background process, inside your browser. No page text is sent to any server, mine or anyone else's.</p>
+      <p data-l="ja">ふりがなをオンにすると、アドオンはページに見えている文字を読み、日本語の形態素解析器(Sudachi を WebAssembly にしたもの)で読みを求めて、漢字の上にルビとして重ねます。これはぜんぶ、アドオン自身のバックグラウンド処理の中、つまりあなたのブラウザの中で起きます。ページの文字がどこかのサーバー(私のものも、ほかの誰かのものも)に送られることは、ありません。</p>
+      <p data-l="ko">후리가나를 켜면, 확장 기능은 페이지에 보이는 글자를 읽고, 일본어 형태소 분석기(Sudachi를 WebAssembly로 만든 것)로 읽는 법을 구해서, 한자 위에 루비로 겹쳐 놓아요. 이 모든 건 확장 기능 자신의 백그라운드 처리 안, 그러니까 여러분의 브라우저 안에서 일어나요. 페이지의 글자가 어딘가의 서버(제 것이든, 다른 누구의 것이든)로 보내지는 일은 없어요.</p>
+    </section>
+
+    <section class="slip sora">
+      <h2 class="slip-title"><span data-l="en">the permissions it asks for, and why</span><span data-l="ja">お願いしている権限と、その理由</span><span data-l="ko">요청하는 권한과, 그 이유</span></h2>
+      <p data-l="en">When you install it, the browser lists a few permissions. One of them sounds bigger than it is, so let me say what each one is for.</p>
+      <p data-l="ja">インストールのとき、ブラウザがいくつか権限を並べます。ひとつ、実際より大きく聞こえるものがあるので、それぞれ何のためかを先にお伝えしておきますね。</p>
+      <p data-l="ko">설치할 때 브라우저가 권한 몇 개를 나열해요. 그중 하나는 실제보다 크게 들리는 게 있어서, 각각 무엇을 위한 건지 미리 말해둘게요.</p>
+      <ul class="why" data-l="en">
+        <li><b>storage</b> — keeps your settings (whether furigana is on, ruby size, the sites to enable automatically, your own dictionary entries) in the browser's local storage. It stays on your device. The add-on never uploads it anywhere.</li>
+        <li><b>tabs</b> — used only to tell which tab you are looking at, so that the on/off toggle lands on the right page. It does not keep your browsing history.</li>
+        <li><b>access to all sites</b> — this is the one that sounds big. Chrome may phrase it as "read and change all your data on all websites". It is there because I can't guess which Japanese sites you'll want furigana on, so the script that draws ruby has to be allowed to run on any page. It reads text only to put readings over it, and it sends page content nowhere.</li>
+      </ul>
+      <ul class="why" data-l="ja">
+        <li><b>storage</b> — 設定(ふりがなのオンオフ、ルビの大きさ、自動でオンにするサイト、あなたのユーザー辞書)を、ブラウザのローカルストレージに置いておきます。端末の中にとどまり、アドオンがどこかにアップロードすることはありません。</li>
+        <li><b>tabs</b> — 今どのタブを見ているかを知るためだけに使います。これで、オンオフの切り替えが正しいページに届きます。閲覧履歴を記録することはありません。</li>
+        <li><b>すべてのサイトへのアクセス</b> — これが、大きく聞こえるほうです。Chrome では「すべてのウェブサイト上にある全データの読み取りと変更」と表示されることがあります。どの日本語サイトでふりがなを使いたいかは私には予想できないので、ルビを描くスクリプトがどのページでも動けるようにしてあります。文字を読むのは読みを重ねるためだけで、ページの内容をどこかに送ることはありません。</li>
+      </ul>
+      <ul class="why" data-l="ko">
+        <li><b>storage</b> — 설정(후리가나 켜짐 여부, 루비 크기, 자동으로 켤 사이트, 여러분의 사용자 사전)을 브라우저의 로컬 저장소에 둬요. 기기 안에만 남고, 확장 기능이 어딘가로 올리는 일은 없어요.</li>
+        <li><b>tabs</b> — 지금 어느 탭을 보고 있는지 알기 위해서만 써요. 그래야 켜기/끄기가 맞는 페이지에 닿아요. 방문 기록을 남기지 않아요.</li>
+        <li><b>모든 사이트에 대한 접근</b> — 이게 크게 들리는 쪽이에요. Chrome에서는 "모든 웹사이트의 모든 데이터 읽기 및 변경"이라고 보일 수 있어요. 어떤 일본어 사이트에서 후리가나를 쓰고 싶으실지 제가 짐작할 수 없어서, 루비를 그리는 스크립트가 어느 페이지에서든 돌 수 있게 해두었어요. 글자를 읽는 건 읽는 법을 얹기 위해서뿐이고, 페이지 내용을 어디로도 보내지 않아요.</li>
+      </ul>
+      <p data-l="en">On Firefox, the add-on declares in its manifest that it collects no data, so the listing says so too.</p>
+      <p data-l="ja">Firefox では、アドオンのマニフェストに「データ収集なし」と宣言してあるので、掲載ページにもそう表示されます。</p>
+      <p data-l="ko">Firefox에서는 확장 기능의 매니페스트에 "데이터 수집 없음"이라고 선언해 두어서, 등록 페이지에도 그렇게 표시돼요.</p>
+    </section>
+
+    <section class="slip wakaba">
+      <h2 class="slip-title"><span data-l="en">what stays in your browser, and where</span><span data-l="ja">ブラウザの中に残るものと、その場所</span><span data-l="ko">브라우저 안에 남는 것과, 그 자리</span></h2>
+      <p data-l="en"><b>Your settings</b> live in the add-on's local storage, and go away when you remove the add-on.</p>
+      <p data-l="ja"><b>あなたの設定</b>は、アドオンのローカルストレージにあります。アドオンを消せば、いっしょになくなります。</p>
+      <p data-l="ko"><b>여러분의 설정</b>은 확장 기능의 로컬 저장소에 있어요. 확장 기능을 지우면 같이 없어져요.</p>
+      <p data-l="en"><b>The dictionary</b> the analyzer uses is bundled inside the add-on. After the first use it is cached in the browser's IndexedDB, under the add-on's own name, only so that the next start is faster. It is never downloaded from an outside server while you use it.</p>
+      <p data-l="ja"><b>辞書</b>は、アドオンの中に同梱してあります。初めて使ったあと、次の起動を速くするためだけに、ブラウザの IndexedDB にアドオン自身の名前で置いておきます。使っている途中で外のサーバーから取ってくることは、ありません。</p>
+      <p data-l="ko"><b>사전</b>은 확장 기능 안에 함께 들어 있어요. 처음 쓴 뒤에는, 다음 시작을 빠르게 하기 위해서만 브라우저의 IndexedDB에 확장 기능 자신의 이름으로 두어요. 쓰는 도중에 바깥 서버에서 받아오는 일은 없어요.</p>
+      <p data-l="en">That's all. There is no account, and nothing that identifies you.</p>
+      <p data-l="ja">それだけです。アカウントはなく、あなたを識別するものも、ありません。</p>
+      <p data-l="ko">그게 전부예요. 계정도 없고, 여러분을 식별하는 것도 없어요.</p>
+    </section>
+
+    <section class="slip fuji">
+      <h2 class="slip-title"><span data-l="en">what it doesn't do</span><span data-l="ja">やっていないこと</span><span data-l="ko">하지 않는 일</span></h2>
+      <ul class="not">
+        <li data-l="en">no analytics, no telemetry</li>
+        <li data-l="ja">アナリティクスも、テレメトリもありません</li>
+        <li data-l="ko">분석도, 텔레메트리도 없어요</li>
+        <li data-l="en">no accounts, no sign-in, no user IDs</li>
+        <li data-l="ja">アカウントも、ログインも、ユーザー識別子もありません</li>
+        <li data-l="ko">계정도, 로그인도, 사용자 식별자도 없어요</li>
+        <li data-l="en">no ads, no third-party scripts</li>
+        <li data-l="ja">広告も、外部のスクリプトもありません</li>
+        <li data-l="ko">광고도, 외부 스크립트도 없어요</li>
+        <li data-l="en">nothing sold or shared. there is nothing collected to share</li>
+        <li data-l="ja">売ることも、渡すこともありません。そもそも渡すものを集めていません</li>
+        <li data-l="ko">팔거나 넘기는 것도 없어요. 애초에 넘길 것을 모으지 않아요</li>
+      </ul>
+    </section>
+
+    <section class="slip hai">
+      <h2 class="slip-title"><span data-l="en">this page itself</span><span data-l="ja">このページのこと</span><span data-l="ko">이 페이지 자체는</span></h2>
+      <p data-l="en">Two small things, about this page rather than the add-on. It remembers which language you picked here, in your browser's localStorage. And its fonts come from Google Fonts, so your browser fetches them from Google when the page opens. The add-on does neither.</p>
+      <p data-l="ja">アドオンではなく、このページのことを二つだけ。ここで選んだ言語を、ブラウザの localStorage に覚えておきます。それと、フォントは Google Fonts から取ってくるので、ページを開くとブラウザが Google にフォントを取りにいきます。アドオン本体は、どちらもしません。</p>
+      <p data-l="ko">확장 기능이 아니라 이 페이지에 대해 두 가지만요. 여기서 고른 언어를 브라우저의 localStorage에 기억해 둬요. 그리고 글꼴은 Google Fonts에서 가져오기 때문에, 페이지를 열면 브라우저가 Google에 글꼴을 받으러 가요. 확장 기능 자체는 둘 다 하지 않아요.</p>
+    </section>
+
+    <section class="slip momo">
+      <h2 class="slip-title"><span data-l="en">if this changes, and questions</span><span data-l="ja">変わるとき、そして質問</span><span data-l="ko">바뀔 때, 그리고 질문</span></h2>
+      <p data-l="en">If any of this changes, I'll update this page and the date at the top. The source is open, so you can always check for yourself.</p>
+      <p data-l="ja">ここに書いたことが変わったら、このページと、上の日付を更新します。ソースは公開してあるので、いつでもご自身の目で確かめられます。</p>
+      <p data-l="ko">여기 적은 것이 바뀌면, 이 페이지와 위의 날짜를 갱신할게요. 소스는 공개되어 있으니, 언제든 직접 확인하실 수 있어요.</p>
+      <ul class="inline-links">
+        <li><a href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener">source on GitHub</a></li>
+        <li><a href="https://github.com/f3liz-casa/yukari-rubi/issues" target="_blank" rel="noopener"><span data-l="en">open an issue</span><span data-l="ja">Issue を立てる</span><span data-l="ko">이슈 남기기</span></a></li>
+        <li><a href="https://misskey.io/@nyanrus" target="_blank" rel="noopener"><span data-l="en">say hi on Misskey</span><span data-l="ja">Misskey で声をかける</span><span data-l="ko">Misskey로 말 걸기</span></a></li>
+      </ul>
+    </section>
   </div>
 
-  <div class="divider"></div>
-
-  <div class="section-head" data-l="en">permissions, and why</div>
-  <div class="section-head" data-l="ja">権限について</div>
-  <div class="section-head" data-l="ko">권한에 대해</div>
-  <div class="prose">
-    <ul data-l="en">
-      <li><strong>storage</strong> — saves your settings (whether furigana is on, ruby size, auto-enable site list, your custom dictionary entries) in your browser's local storage. This data stays on your device; it is never uploaded anywhere by the extension.</li>
-      <li><strong>tabs</strong> — used only to identify the tab you're currently looking at, so toggling furigana applies to the right page. The extension does not record your browsing history.</li>
-      <li><strong>access to all sites</strong> — the extension needs to run its content script on whichever page you enable it on, since you might want furigana on any Japanese site. It doesn't read or transmit page content anywhere outside your browser.</li>
-    </ul>
-    <ul data-l="ja">
-      <li><strong>storage</strong> — 設定（ふりがなのオンオフ、ルビのサイズ、自動オンにするサイトの一覧、ユーザー辞書）をブラウザのローカルストレージに保存します。このデータは端末内にとどまり、拡張機能がどこかにアップロードすることはありません。</li>
-      <li><strong>tabs</strong> — 今どのタブを見ているかを識別するためだけに使います。これにより、ふりがなの切り替えが正しいページに反映されます。閲覧履歴を記録することはありません。</li>
-      <li><strong>すべてのサイトへのアクセス</strong> — どの日本語サイトでふりがなを使いたいかはユーザー次第なので、有効にしたページでコンテンツスクリプトを動かせる必要があります。ページの内容をブラウザの外に読み出したり送信したりすることはありません。</li>
-    </ul>
-    <ul data-l="ko">
-      <li><strong>storage</strong> — 설정(후리가나 켜짐 여부, 루비 크기, 자동 활성화 사이트 목록, 사용자 사전)을 브라우저의 로컬 저장소에 저장합니다. 이 데이터는 기기 안에만 남고, 확장 기능이 어딘가로 업로드하는 일은 없습니다.</li>
-      <li><strong>tabs</strong> — 지금 보고 있는 탭이 어떤 것인지 식별하는 용도로만 사용합니다. 이를 통해 후리가나 켜기/끄기가 올바른 페이지에 적용됩니다. 방문 기록을 기록하지 않습니다.</li>
-      <li><strong>모든 사이트에 대한 접근 권한</strong> — 어떤 일본어 사이트에서 후리가나를 쓰고 싶을지는 사용자마다 다르므로, 활성화한 페이지에서 콘텐츠 스크립트를 실행할 수 있어야 합니다. 페이지 내용을 브라우저 밖으로 읽어가거나 전송하지 않습니다.</li>
-    </ul>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-head" data-l="en">what we don't do</div>
-  <div class="section-head" data-l="ja">やっていないこと</div>
-  <div class="section-head" data-l="ko">하지 않는 일</div>
-  <div class="prose">
-    <ul data-l="en">
-      <li>No analytics or telemetry of any kind.</li>
-      <li>No accounts, no sign-in, no user identifiers.</li>
-      <li>No ads, no third-party scripts.</li>
-      <li>No data is sold or shared with anyone — there's simply none collected to share.</li>
-    </ul>
-    <ul data-l="ja">
-      <li>アナリティクスやテレメトリの類は一切ありません。</li>
-      <li>アカウント、サインイン、ユーザー識別子はありません。</li>
-      <li>広告やサードパーティのスクリプトはありません。</li>
-      <li>データを売ったり誰かと共有したりすることはありません。そもそも共有するデータを収集していません。</li>
-    </ul>
-    <ul data-l="ko">
-      <li>어떠한 종류의 분석(analytics)이나 텔레메트리도 없습니다.</li>
-      <li>계정, 로그인, 사용자 식별자가 없습니다.</li>
-      <li>광고나 제3자 스크립트가 없습니다.</li>
-      <li>데이터를 판매하거나 누군가와 공유하는 일이 없습니다 —애초에 공유할 데이터를 수집하지 않습니다.</li>
-    </ul>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-head" data-l="en">the dictionary file</div>
-  <div class="section-head" data-l="ja">辞書ファイルについて</div>
-  <div class="section-head" data-l="ko">사전 파일에 대해</div>
-  <div class="prose">
-    <p data-l="en">The Japanese dictionary the tokenizer uses is bundled with the extension itself and cached in your browser's IndexedDB after first use, purely to speed up startup. It is never downloaded from an external server at runtime.</p>
-    <p data-l="ja">形態素解析に使う辞書ファイルは拡張機能自体に同梱されており、初回利用後は起動を速くするためだけにブラウザのIndexedDBにキャッシュされます。実行時に外部サーバーからダウンロードされることはありません。</p>
-    <p data-l="ko">형태소 분석에 쓰는 사전 파일은 확장 기능 자체에 포함되어 있으며, 처음 사용한 뒤에는 시작 속도를 높이기 위한 목적으로만 브라우저의 IndexedDB에 캐시됩니다. 실행 중에 외부 서버에서 다운로드되는 일은 없습니다.</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-head" data-l="en">changes to this policy</div>
-  <div class="section-head" data-l="ja">このポリシーの変更について</div>
-  <div class="section-head" data-l="ko">이 방침의 변경에 대해</div>
-  <div class="prose">
-    <p data-l="en">If this ever changes, this page will be updated and the "last updated" date above will change. Since the extension's source is open, you can always check for yourself.</p>
-    <p data-l="ja">もし内容に変更があれば、このページを更新し、上記の最終更新日を変更します。拡張機能のソースコードは公開されているので、いつでもご自身で確認いただけます。</p>
-    <p data-l="ko">내용에 변경이 있을 경우 이 페이지를 갱신하고, 위의 최종 수정일을 함께 변경합니다. 확장 기능의 소스 코드는 공개되어 있으므로 언제든 직접 확인하실 수 있습니다.</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-head" data-l="en">questions</div>
-  <div class="section-head" data-l="ja">お問い合わせ</div>
-  <div class="section-head" data-l="ko">문의</div>
-  <div class="prose">
-    <p data-l="en">Open an issue on <a href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener" style="color: var(--warm-ink);">GitHub</a>, or reach out on <a href="https://misskey.io/@nyanrus" target="_blank" rel="noopener" style="color: var(--warm-ink);">Misskey</a>.</p>
-    <p data-l="ja"><a href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener" style="color: var(--warm-ink);">GitHub</a>にIssueを立てるか、<a href="https://misskey.io/@nyanrus" target="_blank" rel="noopener" style="color: var(--warm-ink);">Misskey</a>までご連絡ください。</p>
-    <p data-l="ko"><a href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener" style="color: var(--warm-ink);">GitHub</a>에 이슈를 남기시거나, <a href="https://misskey.io/@nyanrus" target="_blank" rel="noopener" style="color: var(--warm-ink);">Misskey</a>로 연락해 주세요.</p>
-  </div>
-
-  <div class="foot">
-    <a href="/yukari-rubi/">← yukari-rubi</a>
-    <a href="https://f3liz.casa">f3liz.casa</a>
-  </div>
-
+  <p class="closing"><span data-l="en">Thank you for reading!</span><span data-l="ja">読んでくれてありがとう！</span><span data-l="ko">읽어 주셔서 감사합니다!</span> <a href="/yukari-rubi/">yukari-rubi</a> · <a href="/">f3liz.casa</a></p>
 </main>
 
 <script>
+  // Language switcher — auto-detect, allow override, persist (shared key with the yukari-rubi page)
   (function() {
     const root = document.documentElement;
     const SUPPORTED = ['en', 'ja', 'ko'];
@@ -313,6 +247,5 @@
     set(detect());
   })();
 </script>
-
 </body>
 </html>
