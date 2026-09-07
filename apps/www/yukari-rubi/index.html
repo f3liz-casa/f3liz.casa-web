@@ -5,364 +5,175 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>yukari-rubi · f3liz.casa</title>
 <meta name="description" content="A small Firefox add-on that adds furigana over kanji." />
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;500;700&family=Nanum+Gothic:wght@400;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&family=BIZ+UDPGothic:wght@400;700&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet" />
 <style>
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
   :root {
-    /* f3liz.casa tokens */
     color-scheme: light dark;
-    --surface: #f5f3ee;
-    --surface-raised: #ffffff;
-    --ink: rgb(45, 45, 43);
-    --ink-soft: #5b5b58;
-    --ink-muted: #8e8e88;
-    --line: #e5e2da;
-    --surface-sunken: #ececea;
-    --warm: #d97a3c;
-    --warm-soft: #fdf1e6;
-    --warm-line: #f0d9bf;
-    --warm-ink: #b85f24;
-    --wip-bg: #e8efe6;
-    --wip-ink: #5d7a5a;
-    --star-bg: #fdf1e6;
-    --star-ink: #b85f24;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
   }
-
   @media (prefers-color-scheme: dark) {
-    :root {
-      --surface: #16161a;
-      --surface-raised: #1d1d22;
-      --ink: #e8e6e0;
-      --ink-soft: #c2beb5;
-      --ink-muted: #9a968e;
-      --line: rgba(232, 230, 224, 0.12);
-      --surface-sunken: #232328;
-      --warm-soft: #2a2118;
-      --warm-line: #6b4a30;
-      --warm-ink: #e0a165;
-    }
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
   }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: currentColor; }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--surface); }
-  body {
-    color: var(--ink);
-    font-family: "BIZ UDPGothic", "Nunito Sans", "Nanum Gothic", system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-  html[data-lang="en"] body { font-family: "Nunito Sans", "BIZ UDPGothic", system-ui, sans-serif; }
-  html[data-lang="ko"] body { font-family: "Nanum Gothic", "BIZ UDPGothic", system-ui, sans-serif; }
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
 
-  /* Title and pills always use BIZ UDPGothic so layout is stable across langs */
-  .hero-title, .hero-eyebrow, .hero-pronounce, .topbar-logo, .lang-btn, .section-head, .demo-bar, .chip {
-    font-family: "BIZ UDPGothic", "Nunito Sans", "Nanum Gothic", system-ui, sans-serif;
-  }
-
-  a { color: inherit; text-decoration: none; }
-
-  /* topbar — sticky white surface, matches main page */
-  .topbar {
-    background: var(--surface-raised);
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 1.75rem; min-height: 52px;
-    position: sticky; top: 0; z-index: 10;
-  }
-  .topbar-logo { font-size: 15px; font-weight: 500; white-space: nowrap; }
-  .topbar-logo a { color: var(--ink); font-weight: 500; }
-  .topbar-logo a:hover { color: var(--warm-ink); }
-  .topbar-logo .slug { color: var(--ink-muted); font-weight: 300; }
-
-  .lang-row { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
-  .lang-btn {
-    background: none; border: 1px solid transparent;
-    padding: 4px 10px;
-    color: var(--ink-muted);
-    font-family: 'BIZ UDPGothic', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .lang-btn:hover { color: var(--ink); background: var(--surface-sunken); }
-  .lang-btn[aria-pressed="true"] {
-    color: var(--ink);
-    background: var(--surface-sunken);
-    border-color: var(--line);
-  }
-
-  @media (max-width: 540px) {
-    .topbar { padding: 0.75rem 1.25rem; }
-  }
-
-  /* main column */
-  main { max-width: 620px; margin: 0 auto; padding: 24px 32px 80px; }
-
-  /* hero */
-  .hero { margin-bottom: 32px; }
-  .hero-eyebrow {
-    display: inline-block;
-    background: var(--surface-sunken);
-    color: var(--ink-muted);
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    margin-bottom: 18px;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-  .hero-title {
-    font-size: 56px; font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.05;
-    color: var(--ink);
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 12px;
-  }
-  .hero-title .ext {
-    font-weight: 400; color: var(--ink-muted);
-  }
-  .hero-logo {
-    width: 56px; height: 56px;
-    image-rendering: -webkit-optimize-contrast;
-  }
-  .hero-pronounce {
-    display: inline-block;
-    background: var(--surface-sunken);
-    color: var(--ink-muted);
-    font-size: 13px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-
-  /* card (white panels with hairline border) */
-  .card {
-    background: var(--surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 20px 22px;
-  }
-  .card + .card { margin-top: 10px; }
-
-  .intro-card { margin-top: 28px; }
-  .intro-card p { margin: 0 0 10px; color: var(--ink); }
-  .intro-card p:last-child { margin-bottom: 0; }
-  .intro-card p.soft { color: var(--warm-ink); font-size: 14px; }
-
-  /* divider */
-  .divider {
-    height: 1px; background: var(--line);
-    margin: 40px 0 28px;
-  }
-
-  /* section head */
-  .section-head {
-    font-size: 12px; letter-spacing: 0.18em;
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  /* about — paragraphs */
-  .about p {
-    margin: 0 0 14px;
-    color: var(--ink-soft);
-    font-size: 15px;
-  }
-  .about p:last-child { margin-bottom: 0; }
-
-  /* lang visibility */
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  html[data-lang="ja"] body { font-family: 'Zen Maru Gothic', 'BIZ UDPGothic', var(--font); }
+  html[data-lang="ko"] body { font-family: 'Nanum Gothic', 'Zen Maru Gothic', var(--font); }
   [data-l] { display: none !important; }
-  html[data-lang="en"] [data-l="en"],
-  html[data-lang="ja"] [data-l="ja"],
-  html[data-lang="ko"] [data-l="ko"] { display: revert !important; }
-  html[data-lang="en"] p[data-l="en"],
-  html[data-lang="ja"] p[data-l="ja"],
-  html[data-lang="ko"] p[data-l="ko"] { display: block !important; }
-
-  /* demo card with header bar */
-  .demo {
-    background: var(--surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-top: 14px;
-  }
-  .demo-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 12px;
-    padding: 9px 16px;
-    background: var(--surface-sunken);
-    border-bottom: 1px solid var(--line);
-    font-size: 12px;
-    color: var(--ink-muted);
-    line-height: 1;
-  }
-  .demo-bar .lang { color: var(--ink-muted); }
-  .demo-bar .note { font-style: italic; }
-  .demo-body {
-    padding: 22px 24px;
-    line-height: 2.4;
-    font-size: 16px;
-    font-family: "BIZ UDPGothic", sans-serif;
-    color: var(--ink);
-  }
+  html[data-lang="en"] [data-l="en"], html[data-lang="ja"] [data-l="ja"], html[data-lang="ko"] [data-l="ko"] { display: revert !important; }
+  html[data-lang="en"] p[data-l="en"], html[data-lang="ja"] p[data-l="ja"], html[data-lang="ko"] p[data-l="ko"] { display: block !important; }
+  html[data-lang="en"] li[data-l="en"], html[data-lang="ja"] li[data-l="ja"], html[data-lang="ko"] li[data-l="ko"] { display: list-item !important; }
+  /* the three voices, as on the landing page */
+  .voices { display: flex; gap: .2rem; margin-top: 1.4rem; }
+  .voices button { font: inherit; font-size: .9em; color: var(--ink-soft); background: none; border: 0; padding: .1rem .5rem;
+                   border-radius: 6px; cursor: pointer; }
+  .voices button[aria-pressed="true"] { color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); }
+  .head { display: flex; align-items: center; gap: 1rem; margin-top: .3rem; }
+  .head img { width: 3.4rem; height: 3.4rem; border-radius: 12px; }
+  .title { margin-top: 0; }
+  .demo { font-family: 'Zen Maru Gothic', 'BIZ UDPGothic', var(--font); font-size: 1.15em; line-height: 2.6; margin-top: .4rem; }
   ruby { ruby-position: over; }
-  ruby rt {
-    font-family: "BIZ UDPGothic", sans-serif;
-    color: var(--warm-ink);
-    font-size: 0.55em;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
+  ruby rt { font-size: .66em; color: var(--hue); letter-spacing: .04em; }
+  .demo-note { font-size: .85em; color: var(--hue); }
 
-  /* link chips */
-  .chip-row {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-top: 4px;
-  }
-  .chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 13px;
-    color: var(--ink);
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .chip:hover { border-color: var(--warm); color: var(--warm-ink); }
-  .chip svg { color: var(--ink-muted); flex-shrink: 0; }
-  .chip.tea {
-    background: var(--warm-soft);
-    border-color: var(--warm-line);
-    color: var(--warm-ink);
-  }
-  .chip.tea:hover { border-color: var(--warm); }
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
 
-  /* footer */
-  .foot {
-    margin-top: 64px;
-    display: flex; justify-content: space-between;
-    color: var(--ink-muted); font-size: 12px;
-    letter-spacing: 0.04em;
-  }
-  .foot a { color: var(--ink-muted); }
-  .foot a:hover { color: var(--ink); }
-
-  .thanks {
-    text-align: center;
-    color: var(--ink-muted);
-    font-size: 13px;
-    margin-top: 36px;
-  }
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .head img { width: 2.8rem; height: 2.8rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
-
-<header class="topbar">
-  <div class="topbar-logo">
-    <a href="https://f3liz.casa">f3liz.casa</a><span class="slug">/yukari-rubi</span>
+<main class="table">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <div class="head">
+    <img src="logo.png" alt="" width="56" height="56" />
+    <h1 class="title">yukari-rubi</h1>
   </div>
-  <div class="lang-row">
-    <button class="lang-btn" data-set-lang="en" aria-pressed="true">en</button>
-    <button class="lang-btn" data-set-lang="ja" aria-pressed="false">ja</button>
-    <button class="lang-btn" data-set-lang="ko" aria-pressed="false">ko</button>
-  </div>
-</header>
+  <p class="gloss">ゆかりルビ。漢字に、ふりがなを、そっと。</p>
 
-<main>
+  <p class="wish" data-l="en">A tiny Firefox add-on that puts furigana above the kanji on the page you're reading.</p>
+  <p class="wish" data-l="ja">読んでいるページの漢字に、ふりがなをそっと添える小さな Firefox アドオン。</p>
+  <p class="wish" data-l="ko">읽고 있는 페이지의 한자 위에 후리가나(읽기)를 살짝 달아주는 작은 Firefox 확장 기능입니다.</p>
+  <p class="status"><b>on addons.mozilla.org</b> · TypeScript · sudachi.rs + xcdat, in the browser · works on blogs, Wikipedia, Misskey</p>
 
-  <section class="hero">
-    <div class="hero-eyebrow">firefox add-on</div>
-    <div class="hero-title">
-      <img src="logo.png" alt="" class="hero-logo" width="56" height="56" />
-      <span>yukari-rubi</span>
-    </div>
-    <span class="hero-pronounce">ゆかりルビ</span>
-  </section>
-
-  <div class="card intro-card">
-    <p data-l="en">A tiny Firefox add-on that puts furigana above the kanji on the page you’re reading.</p>
-    <p data-l="ja">読んでいるページの漢字に、ふりがなをそっと添える小さな Firefox アドオン。</p>
-    <p data-l="ko">읽고 있는 페이지의 한자 위에 후리가나(읽기)를 살짝 달아주는 작은 Firefox 확장 기능입니다.</p>
-    <p class="soft" data-l="en">named after ゆかり — dried red shiso sprinkled on rice ฅ^•ﻌ•^ฅ</p>
-    <p class="soft" data-l="ja">名前は赤紫蘇のふりかけ「ゆかり」から ฅ^•ﻌ•^ฅ</p>
-    <p class="soft" data-l="ko">이름은 적자소 후리카케 「ゆかり」에서 ฅ^•ﻌ•^ฅ</p>
+  <div class="voices" role="group" aria-label="language">
+    <button data-set-lang="en" aria-pressed="true">en</button>
+    <button data-set-lang="ja" aria-pressed="false">ja</button>
+    <button data-set-lang="ko" aria-pressed="false">ko</button>
   </div>
 
-  <div class="divider"></div>
+  <div class="slips">
+    <section class="slip tamago wide">
+      <h2 class="slip-title">why it exists</h2>
+      <p data-l="en">I grew up speaking Japanese, but living in Korea I've seen many learners who can read kana but give up because of kanji. I hope this helps a few of them keep going.</p>
+      <p data-l="ja">日本語を母語として育ちましたが、韓国ではカナは読めても漢字でつまずいて日本語を諦める学習者によく出会いました。そんな方の助けになればと思います。</p>
+      <p data-l="ko">저는 일본어를 모국어로 자랐지만, 한국에서 가나는 읽을 수 있어도 한자를 읽지 못해 일본어를 포기하는 학습자분들을 많이 보았습니다. 이 확장 기능이 그런 분들에게 작은 도움이 되었으면 합니다.</p>
+      <p data-l="en">It works on most Japanese sites: blogs, Wikipedia, Misskey.</p>
+      <p data-l="ja">ブログ、Wikipedia、Misskey などの一般的な日本語サイトで動きます。</p>
+      <p data-l="ko">일반 블로그, Wikipedia, Misskey 등 대부분의 일본어 사이트에서 동작합니다.</p>
+    </section>
 
-  <div class="section-head">about</div>
-  <div class="about">
-    <p data-l="en">It works on most Japanese sites — blogs, Wikipedia, Misskey.</p>
-    <p data-l="ja">ブログ、Wikipedia、Misskey などの一般的な日本語サイトで動きます。</p>
-    <p data-l="ko">일반 블로그, Wikipedia, Misskey 등 대부분의 일본어 사이트에서 동작합니다.</p>
+    <section class="slip sakura">
+      <h2 class="slip-title">the name</h2>
+      <p data-l="en">Named after ゆかり, dried red shiso sprinkled on rice. ฅ^•ﻌ•^ฅ</p>
+      <p data-l="ja">名前は赤紫蘇のふりかけ「ゆかり」から。 ฅ^•ﻌ•^ฅ</p>
+      <p data-l="ko">이름은 적자소 후리카케 「ゆかり」에서. ฅ^•ﻌ•^ฅ</p>
+    </section>
 
-    <p data-l="en">I grew up speaking Japanese, but living in Korea I’ve seen many learners who can read kana but give up because of kanji. I hope this helps a few of them keep going.</p>
-    <p data-l="ja">日本語を母語として育ちましたが、韓国ではカナは読めても漢字でつまずいて日本語を諦める学習者によく出会いました。そんな方の助けになればと思います。</p>
-    <p data-l="ko">저는 일본어를 모국어로 자랐지만, 한국에서 가나는 읽을 수 있어도 한자를 읽지 못해 일본어를 포기하는 학습자분들을 많이 보았습니다. 이 확장 기능이 그런 분들에게 작은 도움이 되었으면 합니다.</p>
+    <section class="slip sora full">
+      <h2 class="slip-title">example</h2>
+      <p class="demo-note"><span data-l="en">ja · Wikipedia, with furigana</span><span data-l="ja">ja · Wikipedia、フリガナ付き</span><span data-l="ko">ja · Wikipedia, 후리가나 표시</span></p>
+      <p class="demo" lang="ja"><ruby>紫蘇<rt>しそ</rt></ruby>を<ruby>塩漬<rt>しおづ</rt></ruby>けにし、<ruby>梅干<rt>うめぼ</rt></ruby>しと<ruby>共<rt>とも</rt></ruby>に<ruby>漬<rt>つ</rt></ruby>けて<ruby>乾燥<rt>かんそう</rt></ruby>させたものは「<ruby>ゆかり<rt></rt></ruby>」と<ruby>呼<rt>よ</rt></ruby>ばれ、<ruby>御飯<rt>ごはん</rt></ruby>にかける<ruby>振<rt>ふ</rt></ruby>りかけとして<ruby>親<rt>した</rt></ruby>しまれている。</p>
+    </section>
+
+    <section class="slip wakaba wide go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
+        <li><a href="https://addons.mozilla.org/en-US/firefox/addon/yukari-rubi/" target="_blank" rel="noopener"><span data-l="en">install on Firefox</span><span data-l="ja">Firefox にインストール</span><span data-l="ko">Firefox에 설치</span></a></li>
+        <li><a href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener">source on GitHub</a></li>
+        <li><a href="privacy/"><span data-l="en">privacy policy</span><span data-l="ja">プライバシーポリシー</span><span data-l="ko">개인정보 처리방침</span></a></li>
+      </ul>
+    </section>
+
+    <section class="slip momo">
+      <h2 class="slip-title"><span data-l="en">a milk tea</span><span data-l="ja">ミルクティー</span><span data-l="ko">응원</span></h2>
+      <p data-l="en"><a href="https://buymeacoffee.com/f3liz.casa/yukari-rubi" target="_blank" rel="noopener">buy me a milk tea</a>, if it helped.</p>
+      <p data-l="ja"><a href="https://buymeacoffee.com/f3liz.casa/yukari-rubi" target="_blank" rel="noopener">ミルクティーをどうぞ</a>、役に立ったら。</p>
+      <p data-l="ko"><a href="https://fairy.hada.io/@f3liz-casa" target="_blank" rel="noopener">응원해 주세요</a>, 도움이 되었다면.</p>
+    </section>
   </div>
 
-  <div class="divider"></div>
-
-  <div class="section-head">example</div>
-  <div class="demo">
-    <div class="demo-bar">
-      <span class="lang">ja · wikipedia</span>
-      <span class="note" data-l="en">with furigana</span>
-      <span class="note" data-l="ja">フリガナ付き</span>
-      <span class="note" data-l="ko">후리가나 표시</span>
-    </div>
-    <div class="demo-body">
-      <ruby>紫蘇<rt>しそ</rt></ruby>を<ruby>塩漬<rt>しおづ</rt></ruby>けにし、<ruby>梅干<rt>うめぼ</rt></ruby>しと<ruby>共<rt>とも</rt></ruby>に<ruby>漬<rt>つ</rt></ruby>けて<ruby>乾燥<rt>かんそう</rt></ruby>させたものは「<ruby>ゆかり<rt></rt></ruby>」と<ruby>呼<rt>よ</rt></ruby>ばれ、<ruby>御飯<rt>ごはん</rt></ruby>にかける<ruby>振<rt>ふ</rt></ruby>りかけとして<ruby>親<rt>した</rt></ruby>しまれている。
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-head">links</div>
-  <div class="chip-row">
-    <a class="chip" href="https://addons.mozilla.org/en-US/firefox/addon/yukari-rubi/" target="_blank" rel="noopener">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13zm0 2.5L6.5 8H4l2 2-1 3 3-2 3 2-1-3 2-2H9.5L8 4z"/></svg>
-      <span data-l="en">install on firefox</span>
-      <span data-l="ja">Firefox にインストール</span>
-      <span data-l="ko">Firefox에 설치</span>
-    </a>
-    <a class="chip" href="https://github.com/f3liz-casa/yukari-rubi" target="_blank" rel="noopener">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      <span>github</span>
-    </a>
-    <a class="chip tea" href="https://buymeacoffee.com/f3liz.casa/yukari-rubi" target="_blank" rel="noopener" data-l="en">
-      🧋 buy me a milk tea
-    </a>
-    <a class="chip tea" href="https://buymeacoffee.com/f3liz.casa/yukari-rubi" target="_blank" rel="noopener" data-l="ja">
-      🧋 ミルクティーをどうぞ
-    </a>
-    <a class="chip tea" href="https://fairy.hada.io/@f3liz-casa" target="_blank" rel="noopener" data-l="ko">
-      🧋 응원해 주세요
-    </a>
-  </div>
-
-  <div class="thanks">
-    <span data-l="en">Thank you for reading!</span>
-    <span data-l="ja">読んでくれてありがとう！</span>
-    <span data-l="ko">읽어 주셔서 감사합니다!</span>
-  </div>
-
-  <div class="foot">
-    <a href="https://f3liz.casa">f3liz.casa</a>
-    <a href="privacy/">privacy policy</a>
-    <a href="https://misskey.io/@nyanrus">@nyanrus</a>
-  </div>
-
+  <p class="closing"><span data-l="en">Thank you for reading!</span><span data-l="ja">読んでくれてありがとう！</span><span data-l="ko">읽어 주셔서 감사합니다!</span> <a href="/">f3liz.casa</a> · <a href="https://misskey.io/@nyanrus">@nyanrus</a></p>
 </main>
 
 <script>
@@ -396,6 +207,5 @@
     set(detect());
   })();
 </script>
-
 </body>
 </html>

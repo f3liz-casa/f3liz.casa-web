@@ -1,126 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="Tsubaki — a toy Julia-like language hand-written in OCaml, compiled to WasmGC.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20120%20120%27%3E%3Cg%20fill%3D%27%23A62A28%27%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%2872%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28144%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28216%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28288%2060%2060%29%27/%3E%3C/g%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2710%27%20fill%3D%27%23E6B23A%27/%3E%3C/svg%3E">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>tsubaki · f3liz.casa</title>
+<meta name="description" content="Tsubaki: a toy Julia-like language hand-written in OCaml, compiled to WasmGC." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20120%20120%27%3E%3Cg%20fill%3D%27%23A62A28%27%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%2872%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28144%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28216%2060%2060%29%27/%3E%3Cellipse%20cx%3D%2760%27%20cy%3D%2740%27%20rx%3D%2718%27%20ry%3D%2725%27%20transform%3D%27rotate%28288%2060%2060%29%27/%3E%3C/g%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2710%27%20fill%3D%27%23E6B23A%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
   :root {
-    --bg: #F5F1E8;
-    --ink: #1A1D1A;
-    --muted: #62655A;
-    --crimson: #A62A28;
-    --green: #2C5140;
-    --line: #E2DACB;
-    --code-bg: #EFE9DB;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "Cascadia Code", "Roboto Mono", monospace;
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #14160F;
-      --ink: #ECE7D6;
-      --muted: #9B9C8B;
-      --crimson: #E4635A;
-      --green: #63A282;
-      --line: #2B2E24;
-      --code-bg: #1B1E15;
-    }
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
   }
-  :root[data-theme="light"] {
-    --bg: #F5F1E8; --ink: #1A1D1A; --muted: #62655A; --crimson: #A62A28;
-    --green: #2C5140; --line: #E2DACB; --code-bg: #EFE9DB;
-  }
-  :root[data-theme="dark"] {
-    --bg: #14160F; --ink: #ECE7D6; --muted: #9B9C8B; --crimson: #E4635A;
-    --green: #63A282; --line: #2B2E24; --code-bg: #1B1E15;
-  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: currentColor; }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
 
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
 
-  /* ---- hero ---- */
-  .hero { padding: 88px 0 64px; display: flex; gap: 40px; align-items: center; }
-  .bloom { flex: 0 0 auto; width: 132px; height: 132px; }
-  .bloom svg { width: 100%; height: 100%; display: block;
-    transform-origin: 50% 55%; animation: open .8s cubic-bezier(.2,.8,.25,1) both; }
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  /* the camellia keeps its own two colours */
+  :root { --crimson: #a62a28; --leaf: #2c5140; }
+  @media (prefers-color-scheme: dark) { :root { --crimson: #e4635a; --leaf: #63a282; } }
+  .head { display: flex; align-items: center; gap: 1.4rem; margin-top: .3rem; }
+  .bloom { flex: 0 0 auto; width: 5.5rem; height: 5.5rem; }
+  .bloom svg { width: 100%; height: 100%; display: block; transform-origin: 50% 55%;
+               animation: open .8s var(--ease) both; }
   @keyframes open { from { transform: scale(.72) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
-
-  .name { font-size: clamp(52px, 12vw, 88px); font-weight: 800; letter-spacing: -.03em;
-    line-height: .95; margin: 0; }
-  .kana { display: block; font-size: 15px; font-weight: 500; letter-spacing: .5em;
-    color: var(--crimson); margin: 14px 0 0 4px; }
-  .tagline { font-size: clamp(17px, 2.6vw, 20px); color: var(--muted); margin: 18px 0 0;
-    max-width: 42ch; }
-  .cta { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
-  .btn { font: inherit; font-weight: 600; font-size: 15px; text-decoration: none;
-    padding: 10px 18px; border-radius: 2px; border: 1.5px solid var(--ink); color: var(--bg);
-    background: var(--ink); transition: transform .12s ease, background .12s ease; }
-  .btn:hover { transform: translateY(-2px); }
-  .btn.ghost { background: transparent; color: var(--ink); }
-  .btn.soon { border-color: var(--line); color: var(--muted); cursor: default; }
-  .btn.soon:hover { transform: none; }
-
-  /* ---- sections ---- */
-  section { padding: 40px 0; border-top: 1px solid var(--line); }
-  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--crimson); margin: 0 0 20px; }
-  h2 { font-size: 24px; font-weight: 700; letter-spacing: -.01em; margin: 0 0 14px; }
-  p { margin: 0 0 14px; }
-  .lede { font-size: 18px; }
-
-  .feat { display: grid; gap: 22px; }
-  @media (min-width: 620px) { .feat { grid-template-columns: 1fr 1fr; gap: 28px 40px; } }
-  .feat h3 { font-size: 16px; margin: 0 0 5px; display: flex; align-items: baseline; gap: 8px; }
-  .feat h3 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--crimson);
-    flex: 0 0 auto; transform: translateY(-1px); }
-  .feat p { font-size: 15px; color: var(--muted); margin: 0; }
-
-  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 3px;
-    padding: 18px 20px; overflow-x: auto; margin: 0; }
-  code { font-family: var(--mono); font-size: 13.5px; line-height: 1.7; }
-  .k { color: var(--crimson); }
-  .t { color: var(--green); font-weight: 600; }
-  .c { color: var(--muted); font-style: italic; }
-
-  .name-story p { max-width: 54ch; }
-  .name-story .why { color: var(--ink); }
-  em.leaf { color: var(--green); font-style: normal; font-weight: 600; }
+  .title { margin-top: 0; }
+  .title .kana { display: block; font-size: .95rem; font-weight: 500; letter-spacing: .45em; color: var(--crimson); margin-top: .2rem; }
+  pre .t { color: var(--ink); font-weight: 600; }
+  pre .c { color: var(--hue); font-style: italic; }
+  em.leaf { color: var(--leaf); font-style: normal; font-weight: 600; }
   em.flo { color: var(--crimson); font-style: normal; font-weight: 600; }
+  .slip .lede { font-size: 1.05em; }
 
-  footer { border-top: 1px solid var(--line); padding: 36px 0 72px; color: var(--muted);
-    font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
-  footer a:hover { border-color: var(--crimson); }
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
 
-  @media (max-width: 560px) {
-    .hero { flex-direction: column; align-items: flex-start; gap: 24px; padding-top: 56px; }
-    .bloom { width: 104px; height: 104px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .bloom svg { animation: none; }
-    .btn { transition: none; }
-  }
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .head { align-items: flex-start; } .bloom { width: 4.2rem; height: 4.2rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } .bloom svg { animation: none; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hero">
+<main class="table">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <div class="head">
     <div class="bloom" aria-hidden="true">
       <svg viewBox="0 0 120 120">
         <!-- two leaves behind -->
-        <g fill="var(--green)" opacity=".9">
+        <g fill="var(--leaf)" opacity=".9">
           <path d="M60 96 C40 92 26 74 30 54 C50 58 66 74 60 96 Z"/>
           <path d="M60 96 C80 92 94 74 90 54 C70 58 54 74 60 96 Z"/>
         </g>
@@ -149,48 +146,39 @@
         </g>
       </svg>
     </div>
-    <div>
-      <h1 class="name">Tsubaki<span class="kana">つ ば き</span></h1>
-      <p class="tagline">A toy Julia-like language, hand-written in OCaml and compiled to real WebAssembly.</p>
-      <div class="cta">
-        <a class="btn" href="https://github.com/nyanrus/tsubaki">View on GitHub →</a>
-        <span class="btn soon">Live demo · soon</span>
-      </div>
-    </div>
-  </header>
+    <h1 class="title">Tsubaki<span class="kana">つ ば き</span></h1>
+  </div>
+  <p class="gloss">椿。おもちゃの Julia。OCaml で。</p>
 
-  <section>
-    <p class="eyebrow">What it is</p>
-    <p class="lede">A single hand-written interpreter that covers a surprising amount of Julia's real
-      semantics — then compiles to real WasmGC, calls a Rust numeric kernel across the wasm boundary,
-      and can turn its own quoted code into GPU shaders.</p>
-    <div class="feat">
-      <div>
-        <h3><span class="dot"></span>Multiple dispatch</h3>
-        <p>Julia's actual algorithm: an abstract-type hierarchy up to <code>Any</code>, most-specific
-          method wins, and a real ambiguity error on a tie.</p>
-      </div>
-      <div>
-        <h3><span class="dot"></span>Macros with real hygiene</h3>
-        <p><code>quote</code> / <code>$</code>, <code>gensym</code>, <code>esc</code> — a macro's own
-          temporaries genuinely can't collide with yours.</p>
-      </div>
-      <div>
-        <h3><span class="dot"></span>LinearAlgebra, via Rust/faer</h3>
-        <p><code>lu</code> / <code>qr</code> / <code>svd</code> / <code>eigen</code> and friends — no
-          BLAS, no C, computed across the wasm module boundary.</p>
-      </div>
-      <div>
-        <h3><span class="dot"></span>Shaders from source</h3>
-        <p><code>to_wgsl</code> / <code>to_glsl</code> compile a quoted block into real WGSL/GLSL that
-          runs on WebGPU or WebGL2 — driven from Tsubaki itself.</p>
-      </div>
-    </div>
-  </section>
+  <p class="wish">A toy Julia-like language, hand-written in OCaml and compiled to real WebAssembly.</p>
+  <p class="status"><b>a toy, and says so</b> · OCaml, compiled to WasmGC · Rust numeric kernel across the wasm boundary · MIT</p>
 
-  <section>
-    <p class="eyebrow">A taste</p>
-    <pre><code><span class="k">abstract type</span> Shape <span class="k">end</span>
+  <div class="slips">
+    <section class="slip tamago full">
+      <h2 class="slip-title">what it is</h2>
+      <p class="lede">A single hand-written interpreter that covers a surprising amount of Julia's real semantics, then compiles to real WasmGC, calls a Rust numeric kernel across the wasm boundary, and can turn its own quoted code into GPU shaders.</p>
+    </section>
+
+    <section class="slip sakura">
+      <h2 class="slip-title">multiple dispatch</h2>
+      <p>Julia's actual algorithm: an abstract-type hierarchy up to <code>Any</code>, most-specific method wins, and a real ambiguity error on a tie.</p>
+    </section>
+    <section class="slip fuji">
+      <h2 class="slip-title">macros with real hygiene</h2>
+      <p><code>quote</code> / <code>$</code>, <code>gensym</code>, <code>esc</code>. A macro's own temporaries genuinely can't collide with yours.</p>
+    </section>
+    <section class="slip wakaba">
+      <h2 class="slip-title">LinearAlgebra, via Rust/faer</h2>
+      <p><code>lu</code> / <code>qr</code> / <code>svd</code> / <code>eigen</code> and friends. No BLAS, no C, computed across the wasm module boundary.</p>
+    </section>
+    <section class="slip momo">
+      <h2 class="slip-title">shaders from source</h2>
+      <p><code>to_wgsl</code> / <code>to_glsl</code> compile a quoted block into real WGSL/GLSL that runs on WebGPU or WebGL2, driven from Tsubaki itself.</p>
+    </section>
+
+    <section class="slip sora wide">
+      <h2 class="slip-title">a taste</h2>
+<pre><code><span class="k">abstract type</span> Shape <span class="k">end</span>
 
 <span class="k">struct</span> <span class="t">Circle</span> <: Shape
     r::Float
@@ -204,31 +192,30 @@ area(s::<span class="t">Square</span>) = s.side * s.side     <span class="c"># .
 
 shapes = [<span class="t">Circle</span>(1.0), <span class="t">Square</span>(2.0)]
 println(sum([area(s) <span class="k">for</span> s <span class="k">in</span> shapes]))   <span class="c"># 7.14159...</span></code></pre>
-  </section>
+    </section>
 
-  <section>
-    <p class="eyebrow">Honest about it</p>
-    <p class="lede">Tsubaki is a toy, and says so.</p>
-    <p>It exists to answer one question honestly: how much of Julia's real semantics can a small,
-      hand-written interpreter cover — and how does building that in OCaml compare to building it in
-      JavaScript? (Short version: OCaml's exhaustiveness checking catches every unhandled case at
-      compile time, by name; JavaScript's <code>switch</code> lets the same mistake surface later, at
-      runtime.) Everything in the README was verified by actually running it, not by reading the code.</p>
-  </section>
+    <section class="slip">
+      <h2 class="slip-title">honest about it</h2>
+      <p>Tsubaki is a toy, and says so.</p>
+      <p>It exists to answer one question honestly: how much of Julia's real semantics can a small, hand-written interpreter cover, and how does building that in OCaml compare to building it in JavaScript? Short version: OCaml's exhaustiveness checking catches every unhandled case at compile time, by name; JavaScript's <code>switch</code> lets the same mistake surface later, at runtime. Everything in the README was verified by actually running it, not by reading the code.</p>
+    </section>
 
-  <section class="name-story">
-    <p class="eyebrow">The name</p>
-    <h2>A camel and a Julia, folded into a flower</h2>
-    <p class="why"><em>Tsubaki</em> (椿) is the Japanese name for the <em class="flo">camellia</em>.
-      And <em class="flo">camellia</em> quietly holds a <em class="leaf">camel</em> — OCaml's own
-      mascot — right next to <strong>Julia</strong>. The language's whole parentage, tucked inside a
-      winter flower. What blooms on the outside is just a plain, quiet thing.</p>
-  </section>
+    <section class="slip sakura wide">
+      <h2 class="slip-title">the name</h2>
+      <p><b>A camel and a Julia, folded into a flower.</b> <em>Tsubaki</em> (椿) is the Japanese name for the <em class="flo">camellia</em>. And <em class="flo">camellia</em> quietly holds a <em class="leaf">camel</em>, OCaml's own mascot, right next to <strong>Julia</strong>. The language's whole parentage, tucked inside a winter flower. What blooms on the outside is just a plain, quiet thing.</p>
+    </section>
 
-  <footer>
-    <span><a href="/">f3liz.casa</a> · Built by nyanrus · assisted by Shiro · MIT licensed</span>
-    <a href="https://github.com/nyanrus/tsubaki">github.com/nyanrus/tsubaki</a>
-  </footer>
-</div>
+    <section class="slip wakaba go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
+        <li><a href="https://github.com/nyanrus/tsubaki" target="_blank" rel="noreferrer">source on GitHub</a></li>
+        <li><a href="https://github.com/nyanrus/tsubaki#readme" target="_blank" rel="noreferrer">the README</a></li>
+      </ul>
+      <p class="status">A live demo in the browser is on the way.</p>
+    </section>
+  </div>
+
+  <p class="closing">Built by <a href="/">nyanrus</a>, assisted by Shiro, an AI assistant. MIT licensed. If something here is a misreading, please say so.</p>
+</main>
 </body>
 </html>
