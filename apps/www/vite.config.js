@@ -11,6 +11,7 @@ export default defineConfig({
         yukariRubi: resolve(import.meta.dirname, "yukari-rubi/index.html"),
         yukariRubiPrivacy: resolve(import.meta.dirname, "yukari-rubi/privacy/index.html"),
         karutteWt: resolve(import.meta.dirname, "karutte-wt/index.html"),
+        senga: resolve(import.meta.dirname, "senga/index.html"),
       },
     },
   },

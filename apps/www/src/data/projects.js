@@ -2,6 +2,16 @@
 // without them fall back to ja / ko through t().
 export const projects = [
   {
+    name: "senga",
+    lang: "Rust",
+    href: "/senga/",
+    desc: {
+      en: "HTML+CSS to text, with Servo inside. for eyes that read better than they see",
+      ja: "HTML+CSS を、Servo で組んで、線と数字に。見るより読むほうが得意な目のために",
+      ko: "HTML+CSS를 Servo로 조판해 선과 숫자로. 보는 것보다 읽는 게 나은 눈을 위해",
+    },
+  },
+  {
     name: "karutte-wt",
     lang: "Elixir",
     href: "/karutte-wt/",

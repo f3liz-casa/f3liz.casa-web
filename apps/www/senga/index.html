@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>senga · f3liz.casa</title>
+<meta name="description" content="HTML+CSS in, text out. A page renderer for readers that measure better than they see, with Servo doing the layout." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* the same sheet of paper as the landing page, with one more thing on it */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  :root {
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.06); --apricot-ink: #b86a2e;
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.07); --apricot-ink: #f0b07c; }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px;
+         line-height: 1.8; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: var(--glow); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: var(--apricot); }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
+
+  .letter { position: relative; max-width: 37rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+  .letter::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                    background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .title .soft { font-weight: 400; color: var(--ink-soft); }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.35rem; font-weight: 500; line-height: 1.55; margin-top: 2.2rem; text-wrap: balance; }
+  .status { margin-top: 1rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
+
+  .part { margin-top: 3.2rem; }
+  .part-title { font-size: .9em; font-weight: 500; color: var(--ink-soft); margin-bottom: .7rem; }
+  .part p + p { margin-top: .8rem; }
+  .three { list-style: none; }
+  .three li { padding: .5rem .6rem; margin: 0 -.6rem; border-radius: 8px; transition: background-color 160ms var(--ease); }
+  .three li:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+  .three b { font-weight: 600; }
+  .rows { list-style: none; }
+  .row { display: grid; grid-template-columns: 8.5rem 1fr; column-gap: 1.1rem; align-items: baseline;
+         padding: .35rem .5rem; margin: 0 -.5rem; border-radius: 8px; }
+  .row:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+  .row-desc { color: var(--ink-soft); }
+  pre { font-family: var(--mono); font-size: .82em; line-height: 1.6; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin-top: .6rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the wireframe is a drawing, so it keeps its lines even on a narrow screen */
+  pre.wire { font-size: .72em; line-height: 1.25; white-space: pre; }
+  pre .k { color: var(--ink-soft); }
+  pre .a { font-weight: 600; }
+  .not { list-style: none; color: var(--ink-soft); }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; opacity: .6; }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--ink-soft); opacity: .5; }
+  .closing { margin-top: 4rem; font-size: .9em; color: var(--ink-soft); }
+  @media (max-width: 34rem) { .row { grid-template-columns: 1fr; row-gap: .05rem; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="letter">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <h1 class="title">senga</h1>
+  <p class="gloss">線画。ページの形を、線と数字で。</p>
+
+  <p class="wish">HTML+CSS in, text out. A page renderer for readers that measure better than they see.</p>
+  <p class="status"><b>working</b> · one binary, Servo inside · about three seconds a page · Rust, MIT</p>
+
+  <section class="part">
+    <h2 class="part-title">why it exists</h2>
+    <p>An AI reading a screenshot cannot tell 4 px from 8 px, nor a contrast of 3.9:1 from 4.5:1. Neither can a tired person at midnight. But both can read a number.</p>
+    <p>senga lets <a href="https://servo.org/">Servo</a> lay the page out, asks it where every box landed, and writes that down: a wireframe for the shape, a list for the numbers, and a short list of the things a pair of eyes would have caught. It was built so that Shiro could look at the pages it writes without borrowing anyone's eyes.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">what comes out</h2>
+    <p>A small board page with a few faults planted in it, at 800 px wide:</p>
+<pre class="wire"><code>┌header─────────────────────────────────────────────────────────┐
+│ ·a·····                                                  ·a·· │
+│ ·······                                                  ···· │
+└───────────────────────────────────────────────────────────────┘
+     ┌main·················································┐
+     │·h1 "ようこそ、板へ"                                ·│
+     │·p.lead··············································│
+     │·····················································│
+     │┌article.card────────────┐─┌article.card────────────┐│
+     ││ ·h2 "旅の記録"·········│ │·h2 "哲学デコ"········· ││
+     ││ ·······················│ │······················· ││
+     ││ ┌img──────────────────┐│ │······················· ││
+     ││ │                     ││ │·p                    · ││
+     ││ │                     ││ │······················· ││
+     ││ │                     ││ │┌bu…──┐                 ││
+     ││ └─────────────────────┘│ │└─────┘                 ││
+     ││ ·······················│ │                        ││
+     ││ ·p                    ·│ │                        ││
+     │┌div.wide──────────────────────────────────────────────────
+─────││─·────                 ·                            │
+     └└──────────────────────────────────────────────────────────
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+┌footer─────────────────────────────────────────────────────────┐
+│                                                               │
+└───────────────────────────────────────────────────────────────┘</code></pre>
+    <p>Solid frames are containers and widgets, named on their top edge. Dotted frames are text, with their words inside. The <code>╌</code> line is the fold of the first screen. Then the findings:</p>
+<pre><code><span class="k">## Findings</span>
+- Horizontal scroll: document is <span class="a">980 px</span> wide in a 800 px viewport.
+- `div.wide` spills out of `main` by <span class="a">244 px</span> horizontally.
+- `article.card` clips its content (overflow: hidden).
+- Low contrast <span class="a">2.2:1</span> on `footer` (#aaaaaa on #fafafa) "© natadeco".
+- Low contrast <span class="a">2.8:1</span> on `p.lead` (#999999 on #ffffff) "ここは、…"
+- Text under 12 px: `button` (11px).
+- 1 image(s) without an alt attribute.
+- Targets under 24 px: `a` 70×16, `a.dim` 34×14.</code></pre>
+    <p>Below that, one line per element with position, size, font size, colour and the contrast against what is really behind it (a half-transparent veil over white is grey, not black), and a palette of the font sizes, colours and spacing actually in use, with a note on what falls off the 4 px grid.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">three small things it does</h2>
+    <ul class="three">
+      <li><b>Reads the console.</b> When the wireframe comes out empty, the reason is usually one error line the page logged while starting. senga prints it under the report. That is how it found that Servo ships with WebCrypto off.</li>
+      <li><b>Compares against a real browser.</b> Hand it a Chrome screenshot of the same viewport and it reports, per 100 px band, how many pixels differ. Font rendering stays under a few percent everywhere; a band that jumps is where two layouts disagree. On servo.org the whole page differs by 4.5%, all of it font rendering but one word that wraps a line earlier in Chrome.</li>
+      <li><b>Keeps the engine out of the renderer.</b> The page side hands over a small JSON dump; the text side knows nothing about Servo. A Playwright script that runs the same extraction in Firefox would feed it too.</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">what it is not</h2>
+    <ul class="not">
+      <li>not Firefox or Chrome. Servo's CSS is real but not complete, and its fonts differ, so line breaks can drift by a few pixels. Confirm the final look where people look</li>
+      <li>not a judge. A page can pass every finding and still be ugly, and a 2.3:1 title can be the right call for a wordmark. It measures</li>
+      <li>not small to build. The first build compiles SpiderMonkey and all of Servo, about ten minutes and a few gigabytes. After that, seconds</li>
+      <li>not tried on Linux yet. macOS on Apple Silicon is where it lives so far</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">go</h2>
+    <ul class="inline-links">
+      <li><a href="https://github.com/f3liz-casa/senga" target="_blank" rel="noreferrer">source on GitHub</a></li>
+      <li><a href="https://github.com/f3liz-casa/senga#readme" target="_blank" rel="noreferrer">how to read the output</a></li>
+      <li><a href="https://github.com/f3liz-casa/senga/blob/main/docs/layout-dump.md" target="_blank" rel="noreferrer">the layout dump</a></li>
+    </ul>
+    <p class="status">Needs Rust, a shallow clone of Servo next to it (<code>scripts/fetch-servo.sh</code> does that), and on macOS <code>cmake</code> and <code>pkg-config</code>.</p>
+  </section>
+
+  <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. This page was checked with senga before it went up. If something here is a misreading, please say so.</p>
+</main>
+</body>
+</html>
