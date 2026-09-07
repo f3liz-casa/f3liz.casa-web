@@ -111,7 +111,7 @@
 
     <section class="slip tamago wide">
       <h2 class="slip-title">why it exists</h2>
-      <p>We wanted a fediverse server that could be understood by one person, end to end, and that would not ask for a bigger machine every year. Mastodon is a good neighbour but a large one. So we wrote a small one.</p>
+      <p>We wanted a fediverse server that could be understood by one person, end to end, and that would not ask for a bigger machine every year. Mastodon is a good neighbour but a large one. So we wrote one that <b>folds small and scales out</b>: the same code runs as one BEAM on a free-tier box, and spreads across nodes when it has to, because the seams are OTP applications and not deployment. nyanrus wrote about that order of building in <a href="https://blog.atfedi.de/en/sukhi-fedi/">Folds small, scales out</a>.</p>
       <p>It also became the place to try things: how quiet a timeline can be and still be a timeline, how a follow and a "keep an eye on" should differ, and what it takes to speak both the old and the new HTTP signature dialects to every server out there. <a href="https://natadeco.com/">natadeco</a> runs on it too, as a different front on the same house.</p>
     </section>
 
@@ -160,6 +160,8 @@
         <li><a href="https://github.com/f3liz-casa/sukhi-fedi/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noreferrer">the architecture, start to end</a></li>
         <li><a href="https://github.com/f3liz-casa/sukhi-fedi/blob/main/SETUP.md" target="_blank" rel="noreferrer">running your own</a></li>
         <li><a href="https://sukhi.f3liz.casa/" target="_blank" rel="noreferrer">the instance</a></li>
+        <li><a href="https://sukhi.f3liz.casa/map" target="_blank" rel="noreferrer">its rail map, live</a></li>
+        <li><a href="https://blog.atfedi.de/en/sukhi-fedi/" target="_blank" rel="noreferrer">the introduction on the blog</a></li>
       </ul>
       <p class="status">To try it on a laptop: <code>make dev</code> starts an embedded Postgres and the whole thing in one shell. Docker compose for the real one.</p>
     </section>
