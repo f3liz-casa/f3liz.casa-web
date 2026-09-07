@@ -5,10 +5,6 @@ export const rooms = [
     desc: { en: "notes", ja: "書きもの", ko: "글" },
   },
   {
-    host: "tsubaki.f3liz.casa",
-    desc: { en: "Tsubaki's page", ja: "Tsubaki のページ", ko: "Tsubaki 페이지" },
-  },
-  {
     host: "transit.f3liz.casa",
     desc: {
       en: "Busan bus GPS, gathered all day long",

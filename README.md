@@ -7,11 +7,11 @@ monorepo just keeps them in one place.
 ## Apps
 
 - **`apps/www`** — `www.f3liz.casa`, the main landing page. Vite + Preact,
-  deployed to Cloudflare Workers (static assets). Also serves the `yukari-rubi`
-  pages.
-- **`apps/tsubaki`** — `tsubaki.f3liz.casa`, the project page for
-  [Tsubaki](https://github.com/nyanrus/tsubaki), a toy Julia-like language in
-  OCaml. A single static page (no build step), deployed to Cloudflare Workers.
+  deployed to Cloudflare Workers (static assets). Also serves the `yukari-rubi`,
+  `karutte-wt`, `senga` and `tsubaki` pages.
+- **`apps/tsubaki`** — `tsubaki.f3liz.casa`, now only a redirect to
+  `f3liz.casa/tsubaki/`, where the [Tsubaki](https://github.com/nyanrus/tsubaki)
+  page lives inside `apps/www`. Deployed to Cloudflare Workers.
 - **`apps/transit`** — the transit dashboard (GPS traces / route correction).
   Node + Julia, containerized and deployed with Kamal — not a Cloudflare app,
   so it sits outside the npm workspaces.

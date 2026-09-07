@@ -34,7 +34,7 @@ export const projects = [
   {
     name: "tsubaki",
     lang: "OCaml",
-    href: "https://tsubaki.f3liz.casa/",
+    href: "/tsubaki/",
     desc: {
       en: "a toy Julia, in OCaml",
       ja: "おもちゃの Julia。OCaml で",

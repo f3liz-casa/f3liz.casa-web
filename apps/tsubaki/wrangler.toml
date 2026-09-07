@@ -1,8 +1,6 @@
 name = "tsubaki-f3liz-casa"
+main = "redirect.js"
 compatibility_date = "2025-01-01"
-
-[assets]
-directory = "./dist"
 
 [[routes]]
 pattern = "tsubaki.f3liz.casa"
