@@ -13,6 +13,7 @@ export default defineConfig({
         karutteWt: resolve(import.meta.dirname, "karutte-wt/index.html"),
         senga: resolve(import.meta.dirname, "senga/index.html"),
         tsubaki: resolve(import.meta.dirname, "tsubaki/index.html"),
+        sukhiFedi: resolve(import.meta.dirname, "sukhi-fedi/index.html"),
       },
     },
   },

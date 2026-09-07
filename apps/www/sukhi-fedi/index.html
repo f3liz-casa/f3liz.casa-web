@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sukhi-fedi · f3liz.casa</title>
+<meta name="description" content="A small ActivityPub server in Elixir, for a handful of people. Mastodon and Misskey clients work with it; the timeline does not scroll forever." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* the same sheet of paper as the landing page, with one more thing on it */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  :root {
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.06); --apricot-ink: #b86a2e;
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.07); --apricot-ink: #f0b07c; }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px;
+         line-height: 1.8; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: var(--glow); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: var(--apricot); }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
+
+  .letter { position: relative; max-width: 37rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+  .letter::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                    background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.35rem; font-weight: 500; line-height: 1.55; margin-top: 2.2rem; text-wrap: balance; }
+  .status { margin-top: 1rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
+
+  .part { margin-top: 3.2rem; }
+  .part-title { font-size: .9em; font-weight: 500; color: var(--ink-soft); margin-bottom: .7rem; }
+  .part p + p { margin-top: .8rem; }
+  .three { list-style: none; }
+  .three li { padding: .5rem .6rem; margin: 0 -.6rem; border-radius: 8px; transition: background-color 160ms var(--ease); }
+  .three li:hover { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+  .three b { font-weight: 600; }
+  pre { font-family: var(--mono); font-size: .82em; line-height: 1.6; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin-top: .6rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .78em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--ink-soft); }
+  .not { list-style: none; color: var(--ink-soft); }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; opacity: .6; }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--ink-soft); opacity: .5; }
+  .closing { margin-top: 4rem; font-size: .9em; color: var(--ink-soft); }
+  @media (max-width: 34rem) { .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="letter">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <h1 class="title">sukhi-fedi</h1>
+  <p class="gloss">好。ちいさな fediverse のサーバ。</p>
+
+  <p class="wish">An ActivityPub server for a handful of people, written in Elixir. Mastodon and Misskey clients work with it. The timeline does not scroll forever.</p>
+  <p class="status"><b>running</b> · since spring 2026, on one small box · v0.4 · Elixir + PostgreSQL + NATS · AGPL-3.0</p>
+
+  <section class="part">
+    <h2 class="part-title">why it exists</h2>
+    <p>We wanted a fediverse server that could be understood by one person, end to end, and that would not ask for a bigger machine every year. Mastodon is a good neighbour but a large one. So we wrote a small one.</p>
+    <p>It also became the place to try things: how quiet a timeline can be and still be a timeline, how a follow and a "keep an eye on" should differ, and what it takes to speak both the old and the new HTTP signature dialects to every server out there. <a href="https://natadeco.com/">natadeco</a> runs on it too, as a different front on the same house.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">what it is made of</h2>
+    <p>One BEAM, two roles inside it, and two things it leans on:</p>
+<pre class="wire"><code>people ──HTTPS──▶ ┌ gateway ───────────────┐      ┌ delivery ──────────────┐ ──HTTPS──▶ other servers
+                  │ Mastodon / Misskey API │      │ outbox relay           │
+                  │ inbox, WebFinger, auth │      │ retries, signing       │
+                  │ the SvelteKit web UI   │      │ collection sync        │
+                  └──────────┬─────────────┘      └───────────┬────────────┘
+                             │                                │
+                    PostgreSQL <span class="k">(what is true)</span>          NATS <span class="k">(what just happened)</span></code></pre>
+    <p>ActivityPub itself, the JSON-LD, the HTTP signatures and the integrity proofs, lives in a folder of plain Elixir with no database in it. Its test fixtures were generated by <a href="https://fedify.dev/">Fedify</a>, byte for byte, so the two agree on what a signed activity looks like. The web UI is a SvelteKit app built to static files and served from the same process, so there is one thing to run.</p>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">three small things it does</h2>
+    <ul class="three">
+      <li><b>Stops at the bottom of the page.</b> There is no infinite scroll in any mode, and no timeline refreshes itself. You read what is there and press "more" if you want more. Notifications come in two kinds: someone speaking to you is a plain number, and everything else is a small shape that grows while you are away and resets when you look.</li>
+      <li><b>Knocks twice.</b> The fediverse is halfway through moving from the old draft-cavage signatures to RFC 9421. sukhi-fedi signs with RFC 9421 first, falls back to the old form once if a server refuses, and remembers the answer per host for a week, so a neighbour that upgrades is noticed on its own. Every actor also carries an Ed25519 key and posts go out with an integrity proof, the way Fedify does it.</li>
+      <li><b>Has circles that are honest.</b> A circle is a list of people you want to see on their own page. Putting someone in one does not follow them, and taking them out does not unfollow. A circle can also be a gate on your home: hide these people from home entirely, or only their boosts, or only their replies that are not to you.</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">what it is not</h2>
+    <ul class="not">
+      <li>not big. One box, a few people, a few hundred posts a month. It has never been run with a thousand users, and nothing here says it would go well</li>
+      <li>not a drop-in Mastodon. The client API is compatible enough for the apps we use; the admin side, filters and a long tail of endpoints are still partial, and Misskey compatibility is thinner than Mastodon's</li>
+      <li>not finished with itself. There is a punch list in the repo and it is honest about what is on it</li>
+      <li>not open for signup. The instance at sukhi.f3liz.casa is invitation only. The code is yours to run</li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2 class="part-title">go</h2>
+    <ul class="inline-links">
+      <li><a href="https://github.com/f3liz-casa/sukhi-fedi" target="_blank" rel="noreferrer">source on GitHub</a></li>
+      <li><a href="https://github.com/f3liz-casa/sukhi-fedi/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noreferrer">the architecture, start to end</a></li>
+      <li><a href="https://github.com/f3liz-casa/sukhi-fedi/blob/main/SETUP.md" target="_blank" rel="noreferrer">running your own</a></li>
+      <li><a href="https://sukhi.f3liz.casa/" target="_blank" rel="noreferrer">the instance</a></li>
+    </ul>
+    <p class="status">To try it on a laptop: <code>make dev</code> starts an embedded Postgres and the whole thing in one shell. Docker compose for the real one.</p>
+  </section>
+
+  <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. If something here is a misreading, please say so.</p>
+</main>
+</body>
+</html>

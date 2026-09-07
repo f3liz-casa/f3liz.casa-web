@@ -44,7 +44,7 @@ export const projects = [
   {
     name: "sukhi-fedi",
     lang: "Elixir",
-    href: "https://github.com/f3liz-casa/sukhi-fedi",
+    href: "/sukhi-fedi/",
     desc: {
       en: "ActivityPub server — Elixir",
       ja: "ActivityPubサーバー — Elixir",
