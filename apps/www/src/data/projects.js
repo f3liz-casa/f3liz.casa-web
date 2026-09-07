@@ -42,16 +42,6 @@ export const projects = [
     },
   },
   {
-    name: "noraneko",
-    lang: "TypeScript",
-    href: "/noraneko/",
-    desc: {
-      en: "a Firefox with its front in TypeScript, built in artifact mode. Floorp 12 runs on it",
-      ja: "前面を TypeScript で書いた Firefox、artifact mode で。Floorp 12 はこれの上で動く",
-      ko: "앞면을 TypeScript로 쓴 Firefox, artifact mode로. Floorp 12가 이 위에서 돈다",
-    },
-  },
-  {
     name: "sukhi-fedi",
     lang: "Elixir",
     href: "/sukhi-fedi/",
@@ -111,8 +101,8 @@ export const projects = [
   },
   {
     name: "noraneko",
-    lang: "CSS",
-    href: "https://github.com/f3liz-casa/noraneko",
+    lang: "TypeScript",
+    href: "/noraneko/",
     desc: {
       en: "artifact-based testbed browser — base of Floorp",
       ja: "アーティファクトベースのテストブラウザ — Floorpのベース",
