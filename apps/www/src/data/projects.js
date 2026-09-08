@@ -102,7 +102,7 @@ export const projects = [
   {
     name: "noraneko",
     lang: "TypeScript",
-    href: "https://noraneko.f3liz.casa/",
+    href: "/noraneko/",
     desc: {
       en: "artifact-based testbed browser — base of Floorp",
       ja: "アーティファクトベースのテストブラウザ — Floorpのベース",

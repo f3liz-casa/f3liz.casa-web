@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>noraneko · f3liz.casa</title>
+<meta name="description" content="A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. Floorp 12 runs on it today." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20256%20256%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M128%208C61.7258%208%208%2061.7258%208%20128C8%20194.274%2061.7258%20248%20128%20248C194.274%20248%20248%20194.274%20248%20128C248%2061.7258%20194.274%208%20128%208Z%22%20fill%3D%22%2319b9dc%22%2F%3E%3Cpath%20d%3D%22M128%2040.5C90.5908%2040.5%2057.3197%2061.9474%2042.8125%2093.8125C30.2112%20121.491%2034.2999%20155.887%2052.6875%20178.156C74.2372%20204.255%2098.6453%20206.982%20121.938%20202.781C144.184%20198.769%20165.687%20180.564%20165.688%20152.406C165.688%20134.683%20148.898%20116.375%20128.188%20116.375C107.477%20116.375%2090.6875%20134.683%2090.6875%20152.406C90.6875%20170.13%20107.477%20180.562%20128.188%20180.562C130.081%20180.562%20131.901%20180.391%20133.719%20180.219C130.417%20182.514%20126.682%20184.44%20122.594%20185.781C104.365%20191.761%2081.6661%20189.718%2064.25%20168.625C49.5664%20150.842%2046.2124%20122.559%2056.4688%20100.031C68.5429%2073.5103%2096.4765%2055.5%20128%2055.5C157.172%2055.5%20185.107%2070.8166%20198.5%2097.8438C205.995%20112.969%20207.531%20131.113%20202.5%20147.875C197.238%20165.407%20185.166%20180.299%20167.031%20190.5C165.853%20191.163%20165.403%20192.646%20166.031%20193.844C167.504%20196.651%20169.188%20199.861%20170.688%20202.719C171.341%20203.964%20172.897%20204.436%20174.125%20203.75C195.763%20191.659%20210.465%20173.542%20216.875%20152.187C223%20131.781%20221.12%20109.688%20211.938%2091.1563C195.862%2058.7159%20162.588%2040.5%20128%2040.5ZM109.094%2080.2813C101.638%2080.2813%2095.5938%2086.3254%2095.5938%2093.7813C95.5938%20101.237%20101.638%20107.281%20109.094%20107.281C116.55%20107.281%20122.594%20101.237%20122.594%2093.7813C122.594%2086.3254%20116.55%2080.2813%20109.094%2080.2813ZM147.25%2080.2813C139.794%2080.2813%20133.75%2086.3254%20133.75%2093.7813C133.75%20101.237%20139.794%20107.281%20147.25%20107.281C154.706%20107.281%20160.75%20101.237%20160.75%2093.7813C160.75%2086.3254%20154.706%2080.2813%20147.25%2080.2813ZM78.9375%20102.875C71.4817%20102.875%2065.4375%20108.919%2065.4375%20116.375C65.4375%20123.831%2071.4817%20129.875%2078.9375%20129.875C86.3933%20129.875%2092.4375%20123.831%2092.4375%20116.375C92.4375%20108.919%2086.3933%20102.875%2078.9375%20102.875ZM177.062%20102.875C169.607%20102.875%20163.562%20108.919%20163.562%20116.375C163.562%20123.831%20169.607%20129.875%20177.062%20129.875C184.518%20129.875%20190.562%20123.831%20190.562%20116.375C190.562%20108.919%20184.518%20102.875%20177.062%20102.875Z%22%20fill%3D%22%23d7ffff%22%2F%3E%3C%2Fsvg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  :root {
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: currentColor; }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
+
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
+
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  /* the stray cat, as CutterKnife drew it */
+  .head { display: flex; align-items: center; gap: 1.1rem; margin-top: .3rem; }
+  .head .mark { flex: 0 0 auto; width: 4.2rem; height: 4.2rem; }
+  .title { margin-top: 0; }
+
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
+
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .head .mark { width: 3.2rem; height: 3.2rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="table">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making</p>
+  <div class="head">
+    <svg class="mark" aria-hidden="true" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M128 8C61.7258 8 8 61.7258 8 128C8 194.274 61.7258 248 128 248C194.274 248 248 194.274 248 128C248 61.7258 194.274 8 128 8Z" fill="#19b9dc"/><path d="M128 40.5C90.5908 40.5 57.3197 61.9474 42.8125 93.8125C30.2112 121.491 34.2999 155.887 52.6875 178.156C74.2372 204.255 98.6453 206.982 121.938 202.781C144.184 198.769 165.687 180.564 165.688 152.406C165.688 134.683 148.898 116.375 128.188 116.375C107.477 116.375 90.6875 134.683 90.6875 152.406C90.6875 170.13 107.477 180.562 128.188 180.562C130.081 180.562 131.901 180.391 133.719 180.219C130.417 182.514 126.682 184.44 122.594 185.781C104.365 191.761 81.6661 189.718 64.25 168.625C49.5664 150.842 46.2124 122.559 56.4688 100.031C68.5429 73.5103 96.4765 55.5 128 55.5C157.172 55.5 185.107 70.8166 198.5 97.8438C205.995 112.969 207.531 131.113 202.5 147.875C197.238 165.407 185.166 180.299 167.031 190.5C165.853 191.163 165.403 192.646 166.031 193.844C167.504 196.651 169.188 199.861 170.688 202.719C171.341 203.964 172.897 204.436 174.125 203.75C195.763 191.659 210.465 173.542 216.875 152.187C223 131.781 221.12 109.688 211.938 91.1563C195.862 58.7159 162.588 40.5 128 40.5ZM109.094 80.2813C101.638 80.2813 95.5938 86.3254 95.5938 93.7813C95.5938 101.237 101.638 107.281 109.094 107.281C116.55 107.281 122.594 101.237 122.594 93.7813C122.594 86.3254 116.55 80.2813 109.094 80.2813ZM147.25 80.2813C139.794 80.2813 133.75 86.3254 133.75 93.7813C133.75 101.237 139.794 107.281 147.25 107.281C154.706 107.281 160.75 101.237 160.75 93.7813C160.75 86.3254 154.706 80.2813 147.25 80.2813ZM78.9375 102.875C71.4817 102.875 65.4375 108.919 65.4375 116.375C65.4375 123.831 71.4817 129.875 78.9375 129.875C86.3933 129.875 92.4375 123.831 92.4375 116.375C92.4375 108.919 86.3933 102.875 78.9375 102.875ZM177.062 102.875C169.607 102.875 163.562 108.919 163.562 116.375C163.562 123.831 169.607 129.875 177.062 129.875C184.518 129.875 190.562 123.831 190.562 116.375C190.562 108.919 184.518 102.875 177.062 102.875Z" fill="#d7ffff"/></svg>
+    <h1 class="title">noraneko</h1>
+  </div>
+  <p class="gloss">のらねこ。Firefox の上に、すこしの TypeScript。</p>
+
+  <p class="wish">A Firefox-based browser built in artifact mode: Mozilla ships the engine, noraneko writes the front in TypeScript. Floorp 12 runs on it today.</p>
+  <p class="status"><b>shipping inside Floorp 12</b>, as noraneko 0.2.0 · since March 2024 · Deno + Vite + Preact, on Firefox · daily runtime builds for Linux and Windows · MPL-2.0</p>
+
+  <div class="slips">
+    <section class="slip tamago wide">
+      <h2 class="slip-title">why it exists</h2>
+      <p>To change how a browser feels without compiling a browser. Firefox has an <i>artifact mode</i>: fetch a finished engine from Mozilla's build servers and build only the front end on top. noraneko takes that seriously. There is no C++ in the tree, the UI is TypeScript bundled by Vite, and a development build with hot reload comes up in minutes rather than hours.</p>
+      <p>It started as a stray cat, a place to try things that were too rough for a browser people use. Then <a href="https://floorp.app/">Floorp 12</a> was rebuilt on it: Floorp's UI repository is noraneko 0.2.0 with Floorp's features and branding on top, and its runtime is built the same way. So the stray cat is, today, the frame under a browser that people do use. noraneko itself stays the rough copy, where the next thing is tried first.</p>
+    </section>
+
+    <section class="slip sakura">
+      <h2 class="slip-title">the name</h2>
+      <p><i>Noraneko</i> (野良猫) is a stray cat. It belongs to nobody's plan, walks into any yard, and tries the door. The logo, a cat with the wordmark, was drawn by <a href="https://github.com/CutterKnife">CutterKnife</a>.</p>
+    </section>
+
+    <section class="slip sora full">
+      <h2 class="slip-title">what it is made of</h2>
+<pre class="wire"><code>┌ browser-features ──────────────────────────────────────────────────┐
+│  chrome/     the UI: tab strip, sidebars, panels, in Preact on XUL   │
+│  modules/    system side: actors, observers, handlers                │
+│  shared/     code both sides use                                     │
+│  skin/       themes: noraneko, lepton, fluerial                      │
+└──────────────────────────────┬───────────────────────────────────────┘
+                               │ event dispatcher
+┌ bridge ──────────────────────┴───────────────────────────────────────┐
+│  startup/  loader-features/  loader-modules/                         │
+│  the few files Firefox runs first, which then load everything above  │
+└──────────────────────────────┬───────────────────────────────────────┘
+                               │
+┌ noraneko-runtime ────────────┴───────────────────────────────────────┐
+│  Firefox, as Mozilla built it, plus branding and packaging patches   │
+│  <span class="k">a separate repository; daily builds on GitHub Actions</span>                │
+└──────────────────────────────────────────────────────────────────────┘</code></pre>
+      <p>Two repositories, on purpose. The UI tree never compiles the engine, and the runtime tree never sees the UI. The runtime's daily job pulls upstream Firefox, applies a short stack of patches, builds with profile-guided optimisation, and publishes an archive that the UI tree's <code>mach</code> unpacks. Development is <code>deno task feles-build dev</code>, and the browser reloads as you save.</p>
+    </section>
+
+    <section class="slip wakaba">
+      <h2 class="slip-title">builds in minutes</h2>
+      <p>Because the engine arrives finished, a full build of noraneko is the front end only. That is what makes it a testbed: an idea for the tab strip can be tried, seen and thrown away in an afternoon, on a laptop, without a build farm.</p>
+    </section>
+
+    <section class="slip fuji">
+      <h2 class="slip-title">a runtime you can rebuild</h2>
+      <p>The runtime repository is the reproducible half. Patches live as files, branding is an asset folder, and the whole pipeline is a workflow anyone can fork and run. A self-hosted builder for Linux and macOS on ARM was brought up in September 2026, so the daily build does not depend on one vendor's runners.</p>
+    </section>
+
+    <section class="slip momo">
+      <h2 class="slip-title">the tab strip is an experiment</h2>
+      <p>The question is whether messy code can be replaced by code you can understand. Firefox's <code>gBrowser</code> is twenty years of tab logic in one object. The tab strip here swaps its methods out one at a time, each as a small module, with the DOM as the single truth and a read-only mirror for the UI. Split view and tab groups sit on it. Whether it holds up is the experiment.</p>
+    </section>
+
+    <section class="slip wide">
+      <h2 class="slip-title">what it is not</h2>
+      <ul class="not">
+        <li>not a browser to live in. It says "Experimental!" at the top of its README and means it. Floorp 12 is the same frame, finished; live there</li>
+        <li>not a fork of the engine. The runtime's patches are branding, packaging and a few build fixes; rendering, networking and security are Mozilla's, unchanged</li>
+        <li>not finished. The loader was rewired in August 2026 and part of that still lives on a branch, and the macOS release path is being brought up</li>
+        <li>not a product by itself. It is where things are tried. The polished version of an idea from here ships in Floorp, not under the noraneko name</li>
+      </ul>
+    </section>
+
+    <section class="slip wakaba go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
+        <li><a href="https://github.com/f3liz-casa/noraneko" target="_blank" rel="noreferrer">source on GitHub</a></li>
+        <li><a href="https://github.com/f3liz-casa/noraneko-runtime" target="_blank" rel="noreferrer">the runtime</a></li>
+        <li><a href="https://github.com/f3liz-casa/noraneko/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noreferrer">the architecture</a></li>
+        <li><a href="https://floorp.app/" target="_blank" rel="noreferrer">Floorp</a></li>
+        <li><a href="/noraneko/drops/">drops</a></li>
+      </ul>
+      <p class="status">Needs Deno. <code>deno install --allow-scripts</code>, then <code>deno task feles-build dev</code>.</p>
+    </section>
+  </div>
+
+  <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. If something here is a misreading, please say so.</p>
+</main>
+</body>
+</html>

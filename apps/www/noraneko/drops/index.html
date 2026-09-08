@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>noraneko drops · f3liz.casa</title>
+<meta name="description" content="Drops: one feature that falls into noraneko from a uuid. Built and signed by a registry from source you can read; you read it before anything runs." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20256%20256%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M128%208C61.7258%208%208%2061.7258%208%20128C8%20194.274%2061.7258%20248%20128%20248C194.274%20248%20248%20194.274%20248%20128C248%2061.7258%20194.274%208%20128%208Z%22%20fill%3D%22%2319b9dc%22%2F%3E%3Cpath%20d%3D%22M128%2040.5C90.5908%2040.5%2057.3197%2061.9474%2042.8125%2093.8125C30.2112%20121.491%2034.2999%20155.887%2052.6875%20178.156C74.2372%20204.255%2098.6453%20206.982%20121.938%20202.781C144.184%20198.769%20165.687%20180.564%20165.688%20152.406C165.688%20134.683%20148.898%20116.375%20128.188%20116.375C107.477%20116.375%2090.6875%20134.683%2090.6875%20152.406C90.6875%20170.13%20107.477%20180.562%20128.188%20180.562C130.081%20180.562%20131.901%20180.391%20133.719%20180.219C130.417%20182.514%20126.682%20184.44%20122.594%20185.781C104.365%20191.761%2081.6661%20189.718%2064.25%20168.625C49.5664%20150.842%2046.2124%20122.559%2056.4688%20100.031C68.5429%2073.5103%2096.4765%2055.5%20128%2055.5C157.172%2055.5%20185.107%2070.8166%20198.5%2097.8438C205.995%20112.969%20207.531%20131.113%20202.5%20147.875C197.238%20165.407%20185.166%20180.299%20167.031%20190.5C165.853%20191.163%20165.403%20192.646%20166.031%20193.844C167.504%20196.651%20169.188%20199.861%20170.688%20202.719C171.341%20203.964%20172.897%20204.436%20174.125%20203.75C195.763%20191.659%20210.465%20173.542%20216.875%20152.187C223%20131.781%20221.12%20109.688%20211.938%2091.1563C195.862%2058.7159%20162.588%2040.5%20128%2040.5ZM109.094%2080.2813C101.638%2080.2813%2095.5938%2086.3254%2095.5938%2093.7813C95.5938%20101.237%20101.638%20107.281%20109.094%20107.281C116.55%20107.281%20122.594%20101.237%20122.594%2093.7813C122.594%2086.3254%20116.55%2080.2813%20109.094%2080.2813ZM147.25%2080.2813C139.794%2080.2813%20133.75%2086.3254%20133.75%2093.7813C133.75%20101.237%20139.794%20107.281%20147.25%20107.281C154.706%20107.281%20160.75%20101.237%20160.75%2093.7813C160.75%2086.3254%20154.706%2080.2813%20147.25%2080.2813ZM78.9375%20102.875C71.4817%20102.875%2065.4375%20108.919%2065.4375%20116.375C65.4375%20123.831%2071.4817%20129.875%2078.9375%20129.875C86.3933%20129.875%2092.4375%20123.831%2092.4375%20116.375C92.4375%20108.919%2086.3933%20102.875%2078.9375%20102.875ZM177.062%20102.875C169.607%20102.875%20163.562%20108.919%20163.562%20116.375C163.562%20123.831%20169.607%20129.875%20177.062%20129.875C184.518%20129.875%20190.562%20123.831%20190.562%20116.375C190.562%20108.919%20184.518%20102.875%20177.062%20102.875Z%22%20fill%3D%22%23d7ffff%22%2F%3E%3C%2Fsvg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* the same paper as the landing page, but the letter is cut into slips of pastel and laid on the table */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  :root {
+    color-scheme: light dark;
+    --paper: #fbf6ee; --ink: #4a3f37; --ink-soft: #7d6d5f; --apricot: #f0a26a;
+    --glow: rgba(245, 190, 130, 0.28); --code: rgba(74, 63, 55, 0.07);
+    --font: 'Nunito', 'Zen Maru Gothic', -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    /* pastels: a slip colour and a deeper ink of the same hue for its title */
+    --sakura: #fce4ea; --sakura-ink: #9c4159;
+    --tamago: #fdf0cc; --tamago-ink: #7f5e0c;
+    --sora:   #dfeaf8; --sora-ink:   #3d6491;
+    --wakaba: #dcf0e2; --wakaba-ink: #2f7150;
+    --fuji:   #e9e3f6; --fuji-ink:   #674d9a;
+    --momo:   #fbe4d4; --momo-ink:   #924d22;
+    --hai:    #ebe7e1; --hai-ink:    #6e6459;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #25211d; --ink: #efe6da; --ink-soft: #b3a494; --apricot: #f0a874;
+            --glow: rgba(240, 168, 116, 0.14); --code: rgba(239, 230, 218, 0.08);
+            --sakura: #3a2a30; --sakura-ink: #f0a9bc;
+            --tamago: #383021; --tamago-ink: #ecd07a;
+            --sora:   #262f3b; --sora-ink:   #a4c4ea;
+            --wakaba: #24332a; --wakaba-ink: #9dd6b3;
+            --fuji:   #2f2a3b; --fuji-ink:   #c6b4ee;
+            --momo:   #3a2c24; --momo-ink:   #f0b58e;
+            --hai:    #2e2a26; --hai-ink:    #b3a494; }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px;
+         line-height: 1.75; min-height: 100svh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 2px;
+      text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: .18em; border-radius: 3px;
+      transition: text-decoration-color 160ms var(--ease); }
+  a:hover { text-decoration-color: currentColor; }
+  :focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; border-radius: 6px; }
+
+  .table { position: relative; max-width: 66rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+  .table::before { content: ""; position: absolute; inset: -6rem auto auto -10rem; width: 34rem; height: 26rem;
+                   background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; z-index: -1; }
+  .eyebrow { font-size: .85em; color: var(--ink-soft); }
+  .title { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin-top: .3rem; }
+  .gloss { font-size: .9em; color: var(--ink-soft); margin-top: .3rem; font-family: 'Zen Maru Gothic', var(--font); }
+  .wish { font-size: 1.3rem; font-weight: 500; line-height: 1.5; margin-top: 1.8rem; max-width: 38rem; text-wrap: balance; }
+  .status { margin-top: .8rem; font-size: .92em; color: var(--ink-soft); }
+  .status b { font-weight: 600; color: var(--ink); background: linear-gradient(transparent 55%, var(--glow) 55%); padding: 0 .15em; }
+
+  /* the table: three columns, slips span as they need */
+  .slips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.6rem; }
+  .slip { --tint: var(--hai); --hue: var(--hai-ink);
+          background: var(--tint); border-radius: 14px; padding: 1.25rem 1.35rem 1.4rem; min-width: 0; }
+  .slip.wide { grid-column: span 2; }
+  .slip.full { grid-column: 1 / -1; }
+  .slip.sakura { --tint: var(--sakura); --hue: var(--sakura-ink); }
+  .slip.tamago { --tint: var(--tamago); --hue: var(--tamago-ink); }
+  .slip.sora   { --tint: var(--sora);   --hue: var(--sora-ink); }
+  .slip.wakaba { --tint: var(--wakaba); --hue: var(--wakaba-ink); }
+  .slip.fuji   { --tint: var(--fuji);   --hue: var(--fuji-ink); }
+  .slip.momo   { --tint: var(--momo);   --hue: var(--momo-ink); }
+  .slip-title { font-size: .85em; font-weight: 600; color: var(--hue); letter-spacing: .01em; margin-bottom: .55rem; }
+  .slip p + p { margin-top: .7rem; }
+  .slip b { font-weight: 600; color: var(--hue); }
+  /* the stray cat, as CutterKnife drew it */
+  .head { display: flex; align-items: center; gap: 1.1rem; margin-top: .3rem; }
+  .head .mark { flex: 0 0 auto; width: 4.2rem; height: 4.2rem; }
+  .title { margin-top: 0; }
+
+  pre { font-family: var(--mono); font-size: .8em; line-height: 1.55; background: var(--code); border-radius: 10px;
+        padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: 1em; }
+  /* the drawing keeps its lines even on a narrow screen */
+  pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
+  pre .k { color: var(--hue); }
+  .not { list-style: none; }
+  .not li { padding: .15rem 0; }
+  .not li::before { content: "·"; margin-right: .6em; color: var(--hue); }
+  .inline-links { list-style: none; display: flex; flex-wrap: wrap; row-gap: .2em; }
+  .inline-links li:not(:last-child)::after { content: "·"; margin: 0 .55em; color: var(--hue); }
+  .go .status { color: var(--ink); opacity: .85; }
+  .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
+
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
+  @media (max-width: 36rem) { .head .mark { width: 3.2rem; height: 3.2rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="table">
+  <p class="eyebrow"><a href="/">f3liz.casa</a> · making · <a href="/noraneko/">noraneko</a> · drops</p>
+  <h1 class="title">drops</h1>
+  <p class="gloss">uuid ひとつで、機能が降ってくる。</p>
+
+  <p class="wish">A drop is one feature for noraneko: a small signed xpi, built by a registry from source that sits in the open, and read by you before anything runs. The uuid is what a drop is; the name is only its label.</p>
+  <p class="status"><b>the catalogue</b> is at <a href="https://noraneko.f3liz.casa/drops/">noraneko.f3liz.casa/drops/</a> · registry: <a href="https://github.com/f3liz-casa/noraneko-registry">f3liz-casa/noraneko-registry</a> · since September 2026</p>
+
+  <div class="slips">
+    <section class="slip tamago wide">
+      <h2 class="slip-title">how a drop reaches you</h2>
+      <p>Open a drop's page in the catalogue inside noraneko and press <b>install</b>. It is a plain link to the xpi, the way "Add to Firefox" is; noraneko catches it and opens its settings with the uuid. There it downloads the xpi, checks the sha256 and the registry's signature, and shows you the source and every file that would run. Nothing runs until you press install there. In another browser, copy the uuid and paste it into <code>about:nora:settings</code>.</p>
+      <p>Installing does not need a restart, and "put back" returns the built-in. A drop is installed as a temporary add-on and put back in place at every start from the xpi you already read.</p>
+    </section>
+
+    <section class="slip sakura">
+      <h2 class="slip-title">the shape</h2>
+      <p>A drop is an <i>actor</i>: one TypeScript file that says what runs in the main process and what runs on the page, the same shape Firefox uses for its own new tab. The xpi is only the envelope.</p>
+    </section>
+
+    <section class="slip sora full">
+      <h2 class="slip-title">the registry</h2>
+      <p>The registry is a git repository. A drop is a folder with a <code>drop.toml</code> (uuid, name, note, contact) and its source. The author opens a pull request; a person reads it; when it is merged the registry's CI builds the xpi <b>from that source, reproducibly</b>, signs the manifest with keyless Sigstore under the registry's own identity, and posts it to the server that serves it. The author never uploads a binary, and the server writes nothing that is not signed by the registry.</p>
+      <p>So the trust is: the registry's main branch, and whoever reviews it. noraneko keeps a list of registries (this one is the default) and you can add your own; fork the repository, point it at your own server, and it is a registry. Names are per registry; the uuid is what stays the same everywhere.</p>
+    </section>
+
+    <section class="slip wakaba">
+      <h2 class="slip-title">what you see before saying yes</h2>
+      <ul class="not">
+        <li>the registry's signature, and a link to its Rekor entry</li>
+        <li>who wrote it, as a contact you can reach</li>
+        <li>the source as written, and every file that would actually run</li>
+        <li>which pages it runs on, and what it can call in the main process</li>
+      </ul>
+    </section>
+
+    <section class="slip fuji">
+      <h2 class="slip-title">what it is not</h2>
+      <ul class="not">
+        <li>not an add-on store. There is no account, no rating, no automatic update; a new version is a new xpi you read again</li>
+        <li>not a sandbox yet. A drop runs with the browser's privileges; that is why the reading comes first. Narrowing what a drop can touch is the next piece of work</li>
+        <li>not a promise from the registry. Its signature says "this was built from that source, after review", nothing more</li>
+      </ul>
+    </section>
+
+    <section class="slip wakaba go">
+      <h2 class="slip-title">go</h2>
+      <ul class="inline-links">
+        <li><a href="https://noraneko.f3liz.casa/drops/">the catalogue</a></li>
+        <li><a href="https://github.com/f3liz-casa/noraneko-registry" target="_blank" rel="noreferrer">the registry</a></li>
+        <li><a href="https://github.com/f3liz-casa/noraneko-registry/blob/main/README.md" target="_blank" rel="noreferrer">how it is built and signed</a></li>
+        <li><a href="/noraneko/">noraneko</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <p class="closing">Drafted by Shiro, an AI assistant, sitting next to <a href="/">nyanrus</a>. If something here is a misreading, please say so.</p>
+</main>
+</body>
+</html>
