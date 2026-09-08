@@ -65,17 +65,28 @@
     <section class="slip tamago">
       <h2 class="slip-title">in the registry</h2>
       <span class="fact"><a href="<%= h REGISTRY %>/tree/<%= h commit %>/drops/<%= h d[:name] %>" target="_blank" rel="noreferrer">drops/<%= h d[:name] %>/</a> @ <%= h commit[0, 10] %></span>
+<% if d[:lib] -%>
+      <span class="fact">library: 直接入れるものではなく、これを <code>[deps]</code> に書いた drop に付いてくる</span>
+<% else -%>
       <span class="fact">actors: <b><%= h d[:actors].join(", ") %></b></span>
+<% end -%>
     </section>
 
     <section class="slip hai full files">
       <h2 class="slip-title">the source, as it is</h2>
       <p>These files are what the registry builds into the xpi. The same text is bundled inside the xpi under <code>source/</code>, so what you read here is what you can read there.</p>
 <% d[:sources].each do |f| -%>
+<% if f[:text] -%>
       <details<%= " open" if d[:sources].size == 1 %>>
         <summary><span class="k"><%= h f[:path] %></span> · <%= f[:text].lines.size %> lines</summary>
         <pre><code><%= h f[:text] %></code></pre>
       </details>
+<% else -%>
+      <details>
+        <summary><span class="k"><%= h f[:path] %></span> · <%= f[:bytes] %> bytes</summary>
+        <p>Not text. It is in the xpi as it is here, and its sha256 is what the manifest above says for the whole file.</p>
+      </details>
+<% end -%>
 <% end -%>
     </section>
   </div>

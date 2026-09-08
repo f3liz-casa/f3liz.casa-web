@@ -57,12 +57,19 @@ def read_drops(reg)
     end
     contact = toml[/^contact\s*=\s*(.+)$/, 1].to_s.scan(/"([^"]+)"/).flatten
     actors = toml[/^actors\s*=\s*\[(.*)\]/, 1].to_s.scan(/"([^"]+)"/).flatten
+    # 「source, as it is」に出すもの。読めない bytes(runtime の .wasm など)は
+    # 中身を出さずに、名前と大きさだけ言う — 出せない振りをするより、出せないと
+    # 言うほうが正直だし、HTML に混ぜると壊れる
     sources = Dir.glob(File.join(dir, "src", "**", "*")).select { |f| File.file?(f) }.sort.map do |f|
-      { path: f.sub("#{dir}/", ""), text: File.read(f) }
+      raw = File.binread(f).force_encoding("UTF-8")
+      text = raw.valid_encoding? && !raw.include?("\u0000")
+      { path: f.sub("#{dir}/", ""), text: text ? raw : nil, bytes: File.size(f) }
     end
     {
       uuid: uuid, name: name,
       note: toml[/^note\s*=\s*"([^"]*)"/, 1].to_s,
+      # library drop: 直接入れるものではなく、要る drop に付いてくる(drop.toml の lib = true)
+      lib: toml.match?(/^lib\s*=\s*true/),
       contact: contact, actors: actors, sources: sources,
       manifest: ENV["LOCAL_BUILD"] ? local_manifest(reg, name) : fetch_json("#{DL}/#{uuid}/manifest.json"),
       attestations: ENV["LOCAL_BUILD"] ? nil : fetch_json("#{DL}/#{uuid}/attestations.json"),
@@ -76,7 +83,8 @@ end
 
 def build(reg)
   commit = `git -C #{reg} rev-parse HEAD`.strip
-  drops = read_drops(reg)
+  # 入れるものが先、library はそのあと(直接入れるものではないので)
+  drops = read_drops(reg).sort_by { |d| [d[:lib] ? 1 : 0, d[:name]] }
   built_at = Time.now.utc.strftime("%Y-%m-%d %H:%M UTC")
   out = File.join(ROOT, "drops")
   FileUtils.rm_rf(out)
