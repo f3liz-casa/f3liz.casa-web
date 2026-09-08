@@ -71,6 +71,14 @@
         padding: .9rem 1.1rem; overflow-x: auto; margin: .6rem 0 .8rem; }
   code { font-family: var(--mono); font-size: .9em; background: var(--code); padding: .05em .3em; border-radius: 4px; }
   pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* shiki(build のときに塗ってある)。色だけ借りて、紙はこちらのまま。
+     明暗は span ごとの --shiki-light / --shiki-dark から読む */
+  pre.shiki { background: var(--code); }
+  pre.shiki, pre.shiki span { color: var(--shiki-light); }
+  @media (prefers-color-scheme: dark) {
+    pre.shiki, pre.shiki span { color: var(--shiki-dark); }
+  }
   /* the drawing keeps its lines even on a narrow screen */
   pre.wire { font-size: .76em; line-height: 1.3; white-space: pre; }
   pre .k { color: var(--hue); }

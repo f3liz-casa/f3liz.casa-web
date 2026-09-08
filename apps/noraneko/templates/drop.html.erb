@@ -79,7 +79,11 @@
 <% if f[:text] -%>
       <details<%= " open" if d[:sources].size == 1 %>>
         <summary><span class="k"><%= h f[:path] %></span> · <%= f[:text].lines.size %> lines</summary>
+<% if f[:html] -%>
+        <%= f[:html] %>
+<% else -%>
         <pre><code><%= h f[:text] %></code></pre>
+<% end -%>
       </details>
 <% else -%>
       <details>

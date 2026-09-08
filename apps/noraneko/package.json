@@ -11,6 +11,7 @@
     "deploy": "ruby scripts/drops.rb && vite build && wrangler deploy"
   },
   "devDependencies": {
+    "shiki": "^4.4.3",
     "vite": "^8.0.3",
     "wrangler": "^4.80.0"
   }

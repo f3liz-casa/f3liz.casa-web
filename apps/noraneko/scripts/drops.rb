@@ -81,10 +81,33 @@ def render(name, b)
   ERB.new(File.read(File.join(ROOT, "templates", name)), trim_mode: "-").result(b)
 end
 
+# 色をつけるのは node の shiki(scripts/highlight.mjs)。ここでは全部の source を
+# 一度に渡して、返ってきた HTML を持ち帰るだけ。塗れなかったものは text のまま
+# 出す(その場で読めるほうが、色がつくことより大事)。
+def highlight(drops)
+  files = drops.flat_map do |d|
+    d[:sources].filter_map { |f| { key: "#{d[:uuid]}:#{f[:path]}", path: f[:path], text: f[:text] } if f[:text] }
+  end
+  return if files.empty?
+  out = IO.popen([{ "NODE_NO_WARNINGS" => "1" }, "node", File.join(ROOT, "scripts", "highlight.mjs")], "r+") do |io|
+    io.write(JSON.generate(files))
+    io.close_write
+    io.read
+  end
+  painted = JSON.parse(out)
+  drops.each do |d|
+    d[:sources].each { |f| f[:html] = painted["#{d[:uuid]}:#{f[:path]}"] }
+  end
+  puts "shiki: #{painted.size}/#{files.size} files"
+rescue StandardError => e
+  warn "shiki: #{e.message}(色なしで続ける)"
+end
+
 def build(reg)
   commit = `git -C #{reg} rev-parse HEAD`.strip
   # 入れるものが先、library はそのあと(直接入れるものではないので)
   drops = read_drops(reg).sort_by { |d| [d[:lib] ? 1 : 0, d[:name]] }
+  highlight(drops)
   built_at = Time.now.utc.strftime("%Y-%m-%d %H:%M UTC")
   out = File.join(ROOT, "drops")
   FileUtils.rm_rf(out)
