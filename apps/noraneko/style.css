@@ -88,13 +88,13 @@
 
   /* drops: a drop is a slip with its uuid and a button */
   .uuid { font-family: var(--mono); font-size: .85em; background: var(--code); padding: .15em .45em; border-radius: 6px; word-break: break-all; }
-  .btn { font: inherit; font-weight: 600; color: var(--paper); background: var(--ink); border: 0; border-radius: 999px;
+  .btn { display: inline-block; text-decoration: none; font: inherit; font-weight: 600; color: var(--paper); background: var(--ink); border: 0; border-radius: 999px;
          padding: .55em 1.2em; cursor: pointer; transition: background 160ms var(--ease); }
   .btn:hover { background: var(--hue, var(--ink)); }
   .btn.quiet { color: var(--ink); background: var(--code); }
   .btn:disabled { opacity: .5; cursor: default; }
   .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: .9rem; }
-  .actions .status { margin-top: 0; }
+  .actions .status { margin-top: 0; flex: 1 1 16rem; }
   .fact { display: block; font-size: .92em; color: var(--ink-soft); }
   .fact b { color: var(--ink); font-weight: 500; }
   .files details { margin-top: .5rem; }

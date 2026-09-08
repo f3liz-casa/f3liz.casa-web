@@ -30,7 +30,7 @@
 
   <section class="slip hai full" style="margin-top: 2rem">
     <h2 class="slip-title">how a drop reaches you</h2>
-    <p>Open a drop's page inside noraneko and press <b>install</b>. noraneko's settings open with the uuid: it downloads the xpi, checks the sha256 and the registry's signature, and shows you the source and every file that would run. Nothing runs until you press install there. In another browser, copy the uuid and paste it into <code>about:nora:settings</code>.</p>
+    <p>Open a drop's page inside noraneko and press <b>install</b>. It is a plain link to the xpi, the way "Add to Firefox" is; noraneko catches it and opens its settings with the uuid: it downloads the xpi, checks the sha256 and the registry's signature, and shows you the source and every file that would run. Nothing runs until you press install there. In another browser, copy the uuid and paste it into <code>about:nora:settings</code>.</p>
     <p>The registry that serves these: <code><%= h DL %></code>, signed by <code><%= h IDENTITY %></code>. It is the default one in noraneko; you can add your own.</p>
   </section>
 

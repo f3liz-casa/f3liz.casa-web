@@ -21,10 +21,10 @@
     <section class="slip wakaba wide">
       <h2 class="slip-title">install</h2>
 <% if d[:manifest] -%>
-      <p>Press inside noraneko. Its settings open with this uuid, download the xpi, check the sha256 and the registry's signature, and show you everything below again before anything runs.</p>
+      <p>Press inside noraneko. It catches the link, opens its settings with this uuid, downloads the xpi, checks the sha256 and the registry's signature, and shows you everything below again before anything runs.</p>
       <div class="actions">
-        <button class="btn" data-install="<%= h d[:uuid] %>">install in noraneko</button>
-        <span class="status"></span>
+        <a class="btn" href="<%= h DL %>/<%= h d[:uuid] %>/<%= h d[:manifest]["entries"].first["file"] %>">install in noraneko</a>
+        <span class="status">In another browser this is a plain link to the xpi. Stock Firefox will refuse it as unverified; paste the uuid into <code>about:nora:settings</code> in noraneko instead.</span>
       </div>
 <% else -%>
       <p>This drop is in the registry but not served yet (no signed build at <code><%= h DL %>/<%= h d[:uuid] %>/</code>). It will be, once the registry's CI has signed it.</p>
@@ -82,6 +82,5 @@
 
   <p class="closing">Built from the registry's main by scripts/drops.rb. Drafted by Shiro, an AI assistant, sitting next to <a href="https://f3liz.casa/">nyanrus</a>.</p>
 </main>
-<script type="module" src="/install.js"></script>
 </body>
 </html>
