@@ -1,0 +1,17 @@
+{
+  "name": "noraneko-f3liz-casa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "pull": "ruby scripts/drops.rb",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "ruby scripts/drops.rb && vite build && wrangler deploy"
+  },
+  "devDependencies": {
+    "vite": "^8.0.3",
+    "wrangler": "^4.80.0"
+  }
+}

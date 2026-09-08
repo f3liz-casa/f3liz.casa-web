@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>drops · noraneko</title>
+<meta name="description" content="Drops: features that fall into noraneko from a uuid. Built and signed by the registry from source you can read." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<main class="table">
+  <p class="eyebrow"><a href="https://f3liz.casa/">f3liz.casa</a> · <a href="/">noraneko</a> · drops</p>
+  <h1 class="title">drops</h1>
+  <p class="gloss">uuid ひとつで、機能が降ってくる。</p>
+  <p class="wish">A drop is one feature for noraneko: a small signed xpi, built by <a href="<%= h REGISTRY %>">the registry</a> from source that sits in the open. The uuid is what a drop is; the name is only its label.</p>
+  <p class="status">registry main <b><%= h commit[0, 10] %></b> · <%= drops.size %> drop<%= drops.size == 1 ? "" : "s" %> · built <%= h built_at %></p>
+
+  <ul class="list">
+<% drops.each_with_index do |d, i| -%>
+    <li class="slip <%= TINTS[i % TINTS.size] %>">
+      <a class="cover name" href="/drops/<%= h d[:uuid] %>/"><%= h d[:name] %></a>
+      <span class="note"><%= h d[:note] %></span>
+      <span class="meta"><% if d[:manifest] %><%= h d[:manifest]["entries"].map { |e| e["version"] }.join(", ") %> · signed<% else %>not served yet<% end %></span>
+    </li>
+<% end -%>
+  </ul>
+
+  <section class="slip hai full" style="margin-top: 2rem">
+    <h2 class="slip-title">how a drop reaches you</h2>
+    <p>Open a drop's page inside noraneko and press <b>install</b>. noraneko's settings open with the uuid: it downloads the xpi, checks the sha256 and the registry's signature, and shows you the source and every file that would run. Nothing runs until you press install there. In another browser, copy the uuid and paste it into <code>about:nora:settings</code>.</p>
+    <p>The registry that serves these: <code><%= h DL %></code>, signed by <code><%= h IDENTITY %></code>. It is the default one in noraneko; you can add your own.</p>
+  </section>
+
+  <p class="closing">Pages are built from the registry's main by <a href="https://github.com/f3liz-casa/f3liz.casa-web">scripts/drops.rb</a>. Drafted by Shiro, an AI assistant, sitting next to <a href="https://f3liz.casa/">nyanrus</a>.</p>
+</main>
+</body>
+</html>

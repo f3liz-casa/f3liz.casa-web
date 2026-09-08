@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title><%= h d[:name] %> · drops · noraneko</title>
+<meta name="description" content="<%= h d[:note] %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<main class="table">
+  <p class="eyebrow"><a href="https://f3liz.casa/">f3liz.casa</a> · <a href="/">noraneko</a> · <a href="/drops/">drops</a></p>
+  <h1 class="title"><%= h d[:name] %></h1>
+  <p class="gloss"><%= h d[:note] %></p>
+  <p class="status">uuid <span class="uuid"><%= h d[:uuid] %></span></p>
+
+  <div class="slips">
+    <section class="slip wakaba wide">
+      <h2 class="slip-title">install</h2>
+<% if d[:manifest] -%>
+      <p>Press inside noraneko. Its settings open with this uuid, download the xpi, check the sha256 and the registry's signature, and show you everything below again before anything runs.</p>
+      <div class="actions">
+        <button class="btn" data-install="<%= h d[:uuid] %>">install in noraneko</button>
+        <span class="status"></span>
+      </div>
+<% else -%>
+      <p>This drop is in the registry but not served yet (no signed build at <code><%= h DL %>/<%= h d[:uuid] %>/</code>). It will be, once the registry's CI has signed it.</p>
+<% end -%>
+    </section>
+
+    <section class="slip sakura">
+      <h2 class="slip-title">who</h2>
+<% if d[:contact].empty? -%>
+      <p class="fact">no contact written</p>
+<% else -%>
+<% d[:contact].each do |c| -%>
+      <span class="fact"><% if (href = contact_href(c)) %><a href="<%= h href %>" target="_blank" rel="noreferrer"><%= h c %></a><% else %><%= h c %><% end %></span>
+<% end -%>
+<% end -%>
+    </section>
+
+    <section class="slip sora wide">
+      <h2 class="slip-title">what is served</h2>
+<% if d[:manifest] -%>
+<% d[:manifest]["entries"].each do |e| -%>
+      <span class="fact"><b><%= h e["name"] %></b> · <%= h e["id"] %> · version <b><%= h e["version"] %></b> · <%= e["size"] %> bytes</span>
+      <span class="fact">sha256 <span class="uuid"><%= h e["sha256"] %></span></span>
+<% end -%>
+<% src = d[:manifest]["source"] || {} -%>
+      <span class="fact">built from <a href="<%= h src["repo"] %>/tree/<%= h src["commit"] %>/<%= h src["path"] %>" target="_blank" rel="noreferrer"><%= h src["path"] %> @ <%= h src["commit"].to_s[0, 10] %></a> (<%= h src["commit_time"] %>)</span>
+<% if d[:attestations] -%>
+<% d[:attestations]["attestations"].each do |a| -%>
+      <span class="fact"><%= h a["who"] %>: <% if a["rekorUrl"] %><a href="<%= h a["rekorUrl"] %>" target="_blank" rel="noreferrer">Rekor <%= a["rekor"] %></a><% elsif a["url"] %><a href="<%= h a["url"] %>" target="_blank" rel="noreferrer">run</a><% end %></span>
+<% end -%>
+<% end -%>
+      <span class="fact">served at <a href="<%= h DL %>/<%= h d[:uuid] %>/manifest.json"><%= h DL %>/<%= h d[:uuid] %>/</a></span>
+<% else -%>
+      <span class="fact">nothing yet</span>
+<% end -%>
+    </section>
+
+    <section class="slip tamago">
+      <h2 class="slip-title">in the registry</h2>
+      <span class="fact"><a href="<%= h REGISTRY %>/tree/<%= h commit %>/drops/<%= h d[:name] %>" target="_blank" rel="noreferrer">drops/<%= h d[:name] %>/</a> @ <%= h commit[0, 10] %></span>
+      <span class="fact">actors: <b><%= h d[:actors].join(", ") %></b></span>
+    </section>
+
+    <section class="slip hai full files">
+      <h2 class="slip-title">the source, as it is</h2>
+      <p>These files are what the registry builds into the xpi. The same text is bundled inside the xpi under <code>source/</code>, so what you read here is what you can read there.</p>
+<% d[:sources].each do |f| -%>
+      <details<%= " open" if d[:sources].size == 1 %>>
+        <summary><span class="k"><%= h f[:path] %></span> · <%= f[:text].lines.size %> lines</summary>
+        <pre><code><%= h f[:text] %></code></pre>
+      </details>
+<% end -%>
+    </section>
+  </div>
+
+  <p class="closing">Built from the registry's main by scripts/drops.rb. Drafted by Shiro, an AI assistant, sitting next to <a href="https://f3liz.casa/">nyanrus</a>.</p>
+</main>
+<script type="module" src="/install.js"></script>
+</body>
+</html>

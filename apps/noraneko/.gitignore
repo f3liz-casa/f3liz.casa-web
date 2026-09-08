@@ -1,0 +1,4 @@
+node_modules
+dist
+# written by scripts/drops.rb from the registry's main
+drops/

@@ -14,7 +14,6 @@ export default defineConfig({
         senga: resolve(import.meta.dirname, "senga/index.html"),
         tsubaki: resolve(import.meta.dirname, "tsubaki/index.html"),
         sukhiFedi: resolve(import.meta.dirname, "sukhi-fedi/index.html"),
-        noraneko: resolve(import.meta.dirname, "noraneko/index.html"),
       },
     },
   },

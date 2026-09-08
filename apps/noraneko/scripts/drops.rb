@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+# drops.rb: registry の main から /drops/ と /drops/<uuid>/ を静的に組む(vite build の前に)。
+#
+#   ruby scripts/drops.rb                    → drops/index.html, drops/<uuid>/index.html
+#   REGISTRY_DIR=~/repos/noraneko-registry   手元の checkout で組む(clone しない。試すとき)
+#   LOCAL_BUILD=1                            manifest を dl でなく REGISTRY_DIR/_build/<name>/ から読む(判が押される前に見た目を見るとき)
+#
+# 材料: registry の drops/<name>/drop.toml(uuid / name / note / contact / actors)と src/**/*.ts、
+# それに dl.f3liz.casa/drop/<uuid>/manifest.json と attestations.json(まだ無ければ「not served yet」)。
+require "erb"
+require "json"
+require "net/http"
+require "tmpdir"
+require "fileutils"
+include ERB::Util
+
+ROOT = File.expand_path("..", __dir__)
+REGISTRY = "https://github.com/f3liz-casa/noraneko-registry"
+DL = "https://dl.f3liz.casa/drop"
+IDENTITY = "https://github.com/f3liz-casa/noraneko-registry/.github/workflows/verify-and-sign.yml@refs/heads/main"
+TINTS = %w[sakura tamago sora wakaba fuji momo].freeze
+UUID = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
+
+def fetch_json(url)
+  r = Net::HTTP.get_response(URI(url))
+  r.code == "200" ? JSON.parse(r.body) : nil
+rescue StandardError => e
+  warn "#{url}: #{e.message}"
+  nil
+end
+
+def local_manifest(reg, name)
+  f = File.join(reg, "_build", name, "manifest.json")
+  File.file?(f) ? JSON.parse(File.read(f)) : nil
+end
+
+# 設定画面(settings/src/lib/contact.ts)と同じ読みかた
+def contact_href(c)
+  case c
+  when %r{\Agh/(.+)} then "https://github.com/#{$1}"
+  when %r{\Amail/(.+)} then "mailto:#{$1}"
+  when %r{\Asocial/@([^@]+)@(.+)} then "https://#{$2}/@#{$1}"
+  when %r{\Ahttps?://} then c
+  end
+end
+
+def read_drops(reg)
+  Dir.glob(File.join(reg, "drops", "*", "drop.toml")).sort.filter_map do |t|
+    dir = File.dirname(t)
+    name = File.basename(dir)
+    next if name.start_with?("_")
+    toml = File.read(t)
+    uuid = toml[/^uuid\s*=\s*"([^"]+)"/, 1]
+    unless uuid&.match?(UUID)
+      warn "#{t}: uuid が無い(古い形)。飛ばす"
+      next
+    end
+    contact = toml[/^contact\s*=\s*(.+)$/, 1].to_s.scan(/"([^"]+)"/).flatten
+    actors = toml[/^actors\s*=\s*\[(.*)\]/, 1].to_s.scan(/"([^"]+)"/).flatten
+    sources = Dir.glob(File.join(dir, "src", "**", "*")).select { |f| File.file?(f) }.sort.map do |f|
+      { path: f.sub("#{dir}/", ""), text: File.read(f) }
+    end
+    {
+      uuid: uuid, name: name,
+      note: toml[/^note\s*=\s*"([^"]*)"/, 1].to_s,
+      contact: contact, actors: actors, sources: sources,
+      manifest: ENV["LOCAL_BUILD"] ? local_manifest(reg, name) : fetch_json("#{DL}/#{uuid}/manifest.json"),
+      attestations: ENV["LOCAL_BUILD"] ? nil : fetch_json("#{DL}/#{uuid}/attestations.json"),
+    }
+  end
+end
+
+def render(name, b)
+  ERB.new(File.read(File.join(ROOT, "templates", name)), trim_mode: "-").result(b)
+end
+
+def build(reg)
+  commit = `git -C #{reg} rev-parse HEAD`.strip
+  drops = read_drops(reg)
+  built_at = Time.now.utc.strftime("%Y-%m-%d %H:%M UTC")
+  out = File.join(ROOT, "drops")
+  FileUtils.rm_rf(out)
+  FileUtils.mkdir_p(out)
+  File.write(File.join(out, "index.html"), render("drops.html.erb", binding))
+  drops.each do |d|
+    FileUtils.mkdir_p(File.join(out, d[:uuid]))
+    File.write(File.join(out, d[:uuid], "index.html"), render("drop.html.erb", binding))
+    puts "#{d[:uuid]}  #{d[:name]}#{d[:manifest] ? "" : "  (not served yet)"}"
+  end
+  puts "→ drops/ (#{drops.size}, registry #{commit[0, 10]})"
+end
+
+if ENV["REGISTRY_DIR"]
+  build(File.expand_path(ENV["REGISTRY_DIR"]))
+else
+  Dir.mktmpdir("noraneko-registry-") do |tmp|
+    system("git", "clone", "-q", "--depth", "1", REGISTRY, tmp) or abort "clone failed: #{REGISTRY}"
+    build(tmp)
+  end
+end
