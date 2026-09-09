@@ -16,7 +16,7 @@
   <h1 class="title">drops</h1>
   <p class="gloss">uuid ひとつで、機能が降ってくる。</p>
   <p class="wish">Every drop on the table, from <a href="<%= h REGISTRY %>">the registry</a>. Press one to read it: who wrote it, what is served, and the source as it is. <a href="https://f3liz.casa/noraneko/drops/">What a drop is</a> is told at the house. The ones marked <i>library</i> are not installed on their own: they come with the drops that ask for them.</p>
-  <p class="status">registry main <b><%= h commit[0, 10] %></b> · <%= drops.size %> drop<%= drops.size == 1 ? "" : "s" %> · built <%= h built_at %></p>
+  <p class="status"><%= drops.size %> drop<%= drops.size == 1 ? "" : "s" %> being served · built <%= h built_at %></p>
 
   <ul class="list">
 <% drops.each_with_index do |d, i| -%>

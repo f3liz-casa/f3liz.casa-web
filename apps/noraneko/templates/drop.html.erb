@@ -13,7 +13,7 @@
 <body>
 <main class="table">
   <p class="eyebrow"><a href="/">noraneko</a> · <a href="/drops/">drops</a></p>
-  <h1 class="title"><%= h d[:name] %></h1>
+  <h1 class="title"><% if d[:icon] %><img class="icon" src="<%= h DL %>/<%= h d[:uuid] %>/<%= h d[:icon]["file"] %>" alt="" width="32" height="32" /> <% end %><%= h d[:name] %></h1>
   <p class="gloss"><%= h d[:note] %></p>
   <p class="status">uuid <span class="uuid"><%= h d[:uuid] %></span></p>
 
@@ -64,7 +64,12 @@
 
     <section class="slip tamago">
       <h2 class="slip-title">in the registry</h2>
-      <span class="fact"><a href="<%= h REGISTRY %>/tree/<%= h commit %>/drops/<%= h d[:name] %>" target="_blank" rel="noreferrer">drops/<%= h d[:name] %>/</a> @ <%= h commit[0, 10] %></span>
+<% rc = (d[:manifest] && d[:manifest]["source"] && d[:manifest]["source"]["commit"]).to_s -%>
+<% if rc.empty? -%>
+      <span class="fact">drops/<%= h d[:name] %>/</span>
+<% else -%>
+      <span class="fact"><a href="<%= h REGISTRY %>/tree/<%= h rc %>/drops/<%= h d[:name] %>" target="_blank" rel="noreferrer">drops/<%= h d[:name] %>/</a> @ <%= h rc[0, 10] %> — この版が出てきた木</span>
+<% end -%>
 <% if d[:lib] -%>
       <span class="fact">library: 直接入れるものではなく、これを <code>[deps]</code> に書いた drop に付いてくる</span>
 <% else -%>
@@ -74,7 +79,7 @@
 
     <section class="slip hai full files">
       <h2 class="slip-title">the source, as it is</h2>
-      <p>These files are what the registry builds into the xpi. The same text is bundled inside the xpi under <code>source/</code>, so what you read here is what you can read there.</p>
+      <p>These are read out of the xpi itself, from <code>source/</code> — the same download noraneko checks the sha256 of before it installs. Not a copy of the repository: the bytes below and the bytes that run came out of the same build.</p>
 <% d[:sources].each do |f| -%>
 <% if f[:text] -%>
       <details<%= " open" if d[:sources].size == 1 %>>

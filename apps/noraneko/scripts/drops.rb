@@ -1,18 +1,27 @@
 #!/usr/bin/env ruby
-# drops.rb: registry の main から /drops/ と /drops/<uuid>/ を静的に組む(vite build の前に)。
+# drops.rb: **dl が配っているもの**から /drops/ と /drops/<uuid>/ を静的に組む(vite build の前に)。
 #
 #   ruby scripts/drops.rb                    → drops/index.html, drops/<uuid>/index.html
-#   REGISTRY_DIR=~/repos/noraneko-registry   手元の checkout で組む(clone しない。試すとき)
-#   LOCAL_BUILD=1                            manifest を dl でなく REGISTRY_DIR/_build/<name>/ から読む(判が押される前に見た目を見るとき)
+#   LOCAL_DIR=~/repos/noraneko-registry/_build   dl でなく手元の _build/<name>/ から組む
+#                                               (判が押される前に見た目を見るとき)
 #
-# 材料: registry の drops/<name>/drop.toml(uuid / name / note / contact / actors)と src/**/*.ts、
-# それに dl.f3liz.casa/drop/<uuid>/manifest.json と attestations.json(まだ無ければ「not served yet」)。
+# 材料は dl.f3liz.casa/drop/index.json 一枚と、そこが名指しした xpi。registry を clone しない:
+#
+# - **棚に並ぶのは、いま配れているものだけ。** index.json は判が通る drop しか出さないので、
+#   main には有るがまだ配られていないもの、判が外れたものは、ここにも出ない。
+#   押せないものが並んでいる棚は、棚として嘘になる。
+# - **source は xpi の中の source/ から読む。** 前は registry の main の src/ を読んでいたので、
+#   「配られている bytes」と「いま main にある字」がずれうる(publish から進んだぶん)。
+#   いまは、読んでいる字が、入れたときに動く bytes と同じ組から出ている。
+# - **registry へのリンクは、その drop が build された commit へ。** manifest の source が
+#   覚えているので、main の頭ではなく、その版が出てきた木を指す。
 require "erb"
 require "json"
 require "net/http"
 require "tmpdir"
 require "fileutils"
 include ERB::Util
+require "shellwords"
 
 ROOT = File.expand_path("..", __dir__)
 REGISTRY = "https://github.com/f3liz-casa/noraneko-registry"
@@ -20,6 +29,8 @@ DL = "https://dl.f3liz.casa/drop"
 IDENTITY = "https://github.com/f3liz-casa/noraneko-registry/.github/workflows/verify-and-sign.yml@refs/heads/main"
 TINTS = %w[sakura tamago sora wakaba fuji momo].freeze
 UUID = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
+# 判が押される前に見た目を見るとき: registry の _build/ から組む
+LOCAL = ENV["LOCAL_DIR"] && File.expand_path(ENV["LOCAL_DIR"])
 
 def fetch_json(url)
   r = Net::HTTP.get_response(URI(url))
@@ -29,9 +40,25 @@ rescue StandardError => e
   nil
 end
 
-def local_manifest(reg, name)
-  f = File.join(reg, "_build", name, "manifest.json")
-  File.file?(f) ? JSON.parse(File.read(f)) : nil
+def fetch_bytes(url)
+  r = Net::HTTP.get_response(URI(url))
+  r.code == "200" ? r.body : nil
+rescue StandardError => e
+  warn "#{url}: #{e.message}"
+  nil
+end
+
+# xpi の中の source/ を読む(zip は unzip に任せる。ruby の stdlib には zip が無い)。
+# 読めない bytes(runtime の .wasm など)は中身を出さずに名前と大きさだけ言う —
+# 出せない振りをするより、出せないと言うほうが正直だし、HTML に混ぜると壊れる。
+def read_sources(xpi_path)
+  names = `unzip -Z1 #{xpi_path.shellescape} 2>/dev/null`.lines.map(&:chomp)
+  names.select { |n| n.start_with?("source/") && !n.end_with?("/") }.sort.map do |n|
+    raw = `unzip -p #{xpi_path.shellescape} #{n.shellescape} 2>/dev/null`.b
+    text = raw.dup.force_encoding("UTF-8")
+    ok = text.valid_encoding? && !text.include?("\u0000")
+    { path: n.sub("source/", ""), text: ok ? text : nil, bytes: raw.bytesize }
+  end
 end
 
 # 設定画面(settings/src/lib/contact.ts)と同じ読みかた
@@ -44,37 +71,59 @@ def contact_href(c)
   end
 end
 
-def read_drops(reg)
-  Dir.glob(File.join(reg, "drops", "*", "drop.toml")).sort.filter_map do |t|
-    dir = File.dirname(t)
-    name = File.basename(dir)
-    next if name.start_with?("_")
-    toml = File.read(t)
-    uuid = toml[/^uuid\s*=\s*"([^"]+)"/, 1]
-    unless uuid&.match?(UUID)
-      warn "#{t}: uuid が無い(古い形)。飛ばす"
-      next
+# 棚(dl の index.json)から、判が通っている drop を全部。source は、その drop の
+# 一つ目の xpi の中の source/ から読む(= 入れたときに動く bytes と同じ組)。
+def read_drops(work)
+  shelf =
+    if LOCAL
+      Dir.glob(File.join(LOCAL, "*", "manifest.json")).sort.map { |f| shelf_row(JSON.parse(File.read(f))) }
+    else
+      (fetch_json("#{DL}/index.json") || {})["drops"] || []
     end
-    contact = toml[/^contact\s*=\s*(.+)$/, 1].to_s.scan(/"([^"]+)"/).flatten
-    actors = toml[/^actors\s*=\s*\[(.*)\]/, 1].to_s.scan(/"([^"]+)"/).flatten
-    # 「source, as it is」に出すもの。読めない bytes(runtime の .wasm など)は
-    # 中身を出さずに、名前と大きさだけ言う — 出せない振りをするより、出せないと
-    # 言うほうが正直だし、HTML に混ぜると壊れる
-    sources = Dir.glob(File.join(dir, "src", "**", "*")).select { |f| File.file?(f) }.sort.map do |f|
-      raw = File.binread(f).force_encoding("UTF-8")
-      text = raw.valid_encoding? && !raw.include?("\u0000")
-      { path: f.sub("#{dir}/", ""), text: text ? raw : nil, bytes: File.size(f) }
-    end
+  shelf.filter_map do |row|
+    uuid = row["uuid"].to_s
+    next warn("#{row["name"]}: uuid が読めない。飛ばす") unless uuid.match?(UUID)
+    entries = row["entries"] || []
+    xpi = xpi_path(work, uuid, entries.first)
     {
-      uuid: uuid, name: name,
-      note: toml[/^note\s*=\s*"([^"]*)"/, 1].to_s,
-      # library drop: 直接入れるものではなく、要る drop に付いてくる(drop.toml の lib = true)
-      lib: toml.match?(/^lib\s*=\s*true/),
-      contact: contact, actors: actors, sources: sources,
-      manifest: ENV["LOCAL_BUILD"] ? local_manifest(reg, name) : fetch_json("#{DL}/#{uuid}/manifest.json"),
-      attestations: ENV["LOCAL_BUILD"] ? nil : fetch_json("#{DL}/#{uuid}/attestations.json"),
+      uuid: uuid,
+      name: row["name"].to_s,
+      note: row["note"].to_s,
+      lib: row["lib"] == true,
+      contact: (row["contact"] || []).select { |c| c.is_a?(String) },
+      actors: entries.map { |e| e["name"] }.compact,
+      icon: row["icon"],
+      sources: xpi ? read_sources(xpi) : [],
+      # 版と source は棚がそのまま持っている(template が manifest として読む形に合わせる)
+      manifest: entries.empty? ? nil : { "entries" => entries, "source" => row["source"] },
+      attestations: row["attestations"] || (LOCAL ? nil : fetch_json("#{DL}/#{uuid}/attestations.json")&.dig("attestations")),
     }
   end
+end
+
+# LOCAL_DIR のときは manifest.json をそのまま棚の一行の形に読み替える(判はまだ無い)
+def shelf_row(m)
+  {
+    "uuid" => m["uuid"], "name" => m["name"], "note" => m["note"], "lib" => m["lib"] == true,
+    "contact" => m["contact"], "entries" => m["entries"], "source" => m["source"], "icon" => m["icon"],
+  }
+end
+
+# その drop の一つ目の xpi を手元に(dl から落とすか、_build から写すか)
+def xpi_path(work, uuid, entry)
+  file = entry && entry["file"]
+  return nil unless file&.match?(/\A[A-Za-z0-9._-]+\z/)
+  dst = File.join(work, "#{uuid}-#{file}")
+  if LOCAL
+    src = Dir.glob(File.join(LOCAL, "*", file)).find { |f| File.file?(f) && File.read(File.join(File.dirname(f), "manifest.json")).include?(uuid) }
+    return nil unless src
+    FileUtils.cp(src, dst)
+  else
+    bytes = fetch_bytes("#{DL}/#{uuid}/#{file}")
+    return nil unless bytes
+    File.binwrite(dst, bytes)
+  end
+  dst
 end
 
 def render(name, b)
@@ -103,10 +152,9 @@ rescue StandardError => e
   warn "shiki: #{e.message}(色なしで続ける)"
 end
 
-def build(reg)
-  commit = `git -C #{reg} rev-parse HEAD`.strip
+def build(work)
   # 入れるものが先、library はそのあと(直接入れるものではないので)
-  drops = read_drops(reg).sort_by { |d| [d[:lib] ? 1 : 0, d[:name]] }
+  drops = read_drops(work).sort_by { |d| [d[:lib] ? 1 : 0, d[:name]] }
   highlight(drops)
   built_at = Time.now.utc.strftime("%Y-%m-%d %H:%M UTC")
   out = File.join(ROOT, "drops")
@@ -116,16 +164,9 @@ def build(reg)
   drops.each do |d|
     FileUtils.mkdir_p(File.join(out, d[:uuid]))
     File.write(File.join(out, d[:uuid], "index.html"), render("drop.html.erb", binding))
-    puts "#{d[:uuid]}  #{d[:name]}#{d[:manifest] ? "" : "  (not served yet)"}"
+    puts "#{d[:uuid]}  #{d[:name]}  #{d[:sources].size} files#{d[:manifest] ? "" : "  (no entries)"}"
   end
-  puts "→ drops/ (#{drops.size}, registry #{commit[0, 10]})"
+  puts "→ drops/ (#{drops.size}#{LOCAL ? ", from #{LOCAL}" : ", from #{DL}/index.json"})"
 end
 
-if ENV["REGISTRY_DIR"]
-  build(File.expand_path(ENV["REGISTRY_DIR"]))
-else
-  Dir.mktmpdir("noraneko-registry-") do |tmp|
-    system("git", "clone", "-q", "--depth", "1", REGISTRY, tmp) or abort "clone failed: #{REGISTRY}"
-    build(tmp)
-  end
-end
+Dir.mktmpdir("noraneko-drops-") { |tmp| build(tmp) }
