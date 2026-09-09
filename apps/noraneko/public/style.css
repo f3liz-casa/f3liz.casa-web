@@ -90,8 +90,8 @@
   .go .status { color: var(--ink); opacity: .85; }
   .closing { margin-top: 2.5rem; font-size: .9em; color: var(--ink-soft); max-width: 38rem; }
 
-  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } }
-  @media (max-width: 36rem) { .head .mark { width: 3.2rem; height: 3.2rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } }
+  @media (max-width: 58rem) { .slips { grid-template-columns: repeat(2, 1fr); } .slip.wide { grid-column: 1 / -1; } .filegrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 36rem) { .head .mark { width: 3.2rem; height: 3.2rem; } .slips { grid-template-columns: 1fr; } .slip.wide, .slip.full { grid-column: auto; } .title { font-size: 2rem; } .filegrid { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 
   /* drops: a drop is a slip with its uuid and a button */
@@ -105,10 +105,21 @@
   .actions .status { margin-top: 0; flex: 1 1 16rem; }
   .fact { display: block; font-size: .92em; color: var(--ink-soft); }
   .fact b { color: var(--ink); font-weight: 500; }
-  .files details { margin-top: .5rem; }
   .files summary { cursor: pointer; font-size: .92em; }
   .files summary .k { font-family: var(--mono); font-size: .9em; color: var(--ink-soft); }
   .files pre { margin-top: .5rem; max-height: 40rem; }
+  /* file は面に置く: 名前だけが札になって格子に並び、開いた一枚だけが横いっぱいになる。
+     一覧としては二次元、読むときは一次元 — 読む字を狭い桁に押し込めない */
+  .filegrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .8rem; align-items: start; }
+  .filegrid details { margin: 0; padding: .45rem .6rem; border-radius: .5rem;
+    background: color-mix(in srgb, var(--hue) 6%, transparent); }
+  .filegrid details:hover { background: color-mix(in srgb, var(--hue) 11%, transparent); }
+  .filegrid details[open] { grid-column: 1 / -1; background: color-mix(in srgb, var(--hue) 9%, transparent); }
+  .filegrid summary { list-style: none; overflow-wrap: anywhere; }
+  .filegrid summary::-webkit-details-marker { display: none; }
+  .filegrid summary::before { content: "▸ "; color: var(--hue); }
+  .filegrid details[open] > summary::before { content: "▾ "; }
+  .filegrid .dir { opacity: .55; }
   .list { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
   .list .slip { display: flex; flex-direction: column; gap: .3rem; }
   .list .slip .name { font-size: 1.15rem; font-weight: 600; color: var(--hue); }
