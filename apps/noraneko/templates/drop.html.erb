@@ -52,7 +52,7 @@
 <% src = d[:manifest]["source"] || {} -%>
       <span class="fact">built from <a href="<%= h src["repo"] %>/tree/<%= h src["commit"] %>/<%= h src["path"] %>" target="_blank" rel="noreferrer"><%= h src["path"] %> @ <%= h src["commit"].to_s[0, 10] %></a> (<%= h src["commit_time"] %>)</span>
 <% if d[:attestations] -%>
-<% d[:attestations]["attestations"].each do |a| -%>
+<% d[:attestations].each do |a| -%>
       <span class="fact"><%= h a["who"] %>: <% if a["rekorUrl"] %><a href="<%= h a["rekorUrl"] %>" target="_blank" rel="noreferrer">Rekor <%= a["rekor"] %></a><% elsif a["url"] %><a href="<%= h a["url"] %>" target="_blank" rel="noreferrer">run</a><% end %></span>
 <% end -%>
 <% end -%>
