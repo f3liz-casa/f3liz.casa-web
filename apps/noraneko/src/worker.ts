@@ -19,7 +19,7 @@
 
 import { pageHtml } from "./page.ts";
 import { shelfHtml } from "./shelf.ts";
-import type { Entry, Row, SourceFile } from "./html.ts";
+import { doneLoading, shell, type Entry, type Row, type SourceFile } from "./html.ts";
 
 /** 既定は本番。手元で見るときは wrangler dev --var DL:http://127.0.0.1:8765/drop */
 const DL_DEFAULT = "https://dl.f3liz.casa/drop";
@@ -31,6 +31,8 @@ interface Env {
   DL?: string;
 }
 
+const HEADERS = { "content-type": "text/html; charset=utf-8", "cache-control": `public, max-age=${TTL}` };
+
 async function json<T>(url: string): Promise<T | null> {
   try {
     const r = await fetch(url, { cf: { cacheTtl: 60 } } as RequestInit);
@@ -40,13 +42,39 @@ async function json<T>(url: string): Promise<T | null> {
   }
 }
 
-const page = (body: string) =>
-  new Response(body, {
-    headers: { "content-type": "text/html; charset=utf-8", "cache-control": `public, max-age=${TTL}` },
-  });
+/**
+ * 頁の上を先に流して、材料(dl)が揃ってから残りを流す。
+ *
+ * 組むのに待つのは主に dl の index.json ── 一件ごとに判を確かめて棚を作るので、
+ * cache が切れているときは一秒を超える。それを白い画面で待たせない: 見出しと
+ * 「読んでいます」の一行が先に出て、届いたら残りが下に続き、最後の `<style>` が
+ * その一行を消す。**JS は使わない**(この site は使わない作りで通している)。
+ *
+ * 流し終えたら、組み上がった一枚をそのまま cache に置く ── 次の人は待たない。
+ */
+function streamed(top: string, rest: Promise<string>, ctx: ExecutionContext, cache: Cache, key: Request): Response {
+  const { readable, writable } = new TransformStream();
+  const w = writable.getWriter();
+  const enc = new TextEncoder();
+  void w.write(enc.encode(top));
+  ctx.waitUntil((async () => {
+    let body = "";
+    try {
+      body = (await rest) + doneLoading;
+      await w.write(enc.encode(body));
+    } catch (e) {
+      await w.write(enc.encode(`<p class="msg">組めなかった: ${String(e)}</p>` + doneLoading));
+      body = "";
+    }
+    await w.close();
+    // 途中で落ちたものは置かない(半分の頁が 5 分居座るほうが困る)
+    if (body) await cache.put(key, new Response(top + body, { headers: HEADERS }));
+  })());
+  return new Response(readable, { headers: HEADERS });
+}
 
 export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const DL = env.DL ?? DL_DEFAULT;
     const url = new URL(req.url);
     const path = url.pathname;
@@ -61,29 +89,38 @@ export default {
     const hit = await cache.match(key);
     if (hit) return req.method === "HEAD" ? new Response(null, { status: 200, headers: hit.headers }) : hit;
 
-    const shelf = await json<{ at?: string; drops?: Row[] }>(`${DL}/index.json`);
-    if (!shelf?.drops) {
-      return new Response("dl の棚が読めない。しばらくしてもう一度。\n", {
-        status: 502, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
-      });
-    }
-    const built = shelf.at ?? "";
-    let res: Response;
-    if (path.startsWith("/drops/") && path.length > 8) {
-      const uuid = path.slice(7).replace(/\/$/, "");
-      const row = UUID.test(uuid) ? shelf.drops.find((d) => d.uuid === uuid) : undefined;
-      if (!row) return env.ASSETS.fetch(req); // 配られていない uuid は、404 の頁へ
-      const [m, s] = await Promise.all([
-        json<{ entries?: Entry[] }>(`${DL}/${uuid}/manifest.json`),
-        json<{ files?: SourceFile[] }>(`${DL}/${uuid}/source.json`),
-      ]);
-      res = page(pageHtml(DL, row, m?.entries ?? row.entries ?? [], s?.files ?? [], built));
-    } else {
+    const uuid = path.startsWith("/drops/") && path.length > 8 ? path.slice(7).replace(/\/$/, "") : null;
+    const one = uuid !== null && UUID.test(uuid);
+    if (uuid !== null && !one) return env.ASSETS.fetch(req); // uuid の形をしていない
+
+    const crumb = one
+      ? `<a href="/">noraneko</a> · <a href="/drops/">drops</a>`
+      : `<a href="/">noraneko</a> · drops`;
+    const top = shell(
+      one ? "drops · noraneko" : "drops · noraneko",
+      "Drops: features that fall into noraneko from a uuid. Built and signed by the registry from source you can read.",
+      crumb,
+      `${DL.replace(/^https?:\/\//, "")} を読んでいます`,
+    );
+    if (req.method === "HEAD") return new Response(null, { status: 200, headers: HEADERS });
+
+    const rest = (async () => {
+      const shelf = await json<{ at?: string; drops?: Row[] }>(`${DL}/index.json`);
+      if (!shelf?.drops) throw new Error("dl の棚が読めない。しばらくしてもう一度");
+      const built = shelf.at ?? "";
+      if (one) {
+        const row = shelf.drops.find((d) => d.uuid === uuid);
+        if (!row) throw new Error(`${uuid} は、この registry からは配られていない`);
+        const [m, s] = await Promise.all([
+          json<{ entries?: Entry[] }>(`${DL}/${uuid}/manifest.json`),
+          json<{ files?: SourceFile[] }>(`${DL}/${uuid}/source.json`),
+        ]);
+        return pageHtml(DL, row, m?.entries ?? row.entries ?? [], s?.files ?? [], built);
+      }
       const drops = [...shelf.drops].sort((a, b) =>
         (a.lib === b.lib ? 0 : a.lib ? 1 : -1) || a.name.localeCompare(b.name));
-      res = page(shelfHtml(DL, drops, built));
-    }
-    await cache.put(key, res.clone());
-    return req.method === "HEAD" ? new Response(null, { status: 200, headers: res.headers }) : res;
+      return shelfHtml(DL, drops, built);
+    })();
+    return streamed(top, rest, ctx, cache, key);
   },
 };

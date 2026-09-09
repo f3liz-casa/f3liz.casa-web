@@ -120,6 +120,11 @@
   .filegrid summary::before { content: "▸ "; color: var(--hue); }
   .filegrid details[open] > summary::before { content: "▾ "; }
   .filegrid .dir { opacity: .55; }
+  /* 材料が届くまでの一行。届いたら、あとから来る <style> が消す */
+  .loading { color: var(--ink-soft); margin-top: 2rem; }
+  .loading::after { content: ""; display: inline-block; width: 1.2em; text-align: left;
+    animation: dots 1.2s steps(4, end) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
   .list { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
   .list .slip { display: flex; flex-direction: column; gap: .3rem; }
   .list .slip .name { font-size: 1.15rem; font-weight: 600; color: var(--hue); }

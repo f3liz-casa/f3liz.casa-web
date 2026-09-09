@@ -9,7 +9,7 @@
 // 見えていて、**開いた一枚だけが横いっぱいに広がる**(`details[open]` が全列を取る)。
 // 一覧としては二次元、読むときは一次元 ── 読む字は狭い桁に押し込めない。
 
-import { contactHref, foot, h, head, iconImg, REGISTRY, type Att, type Entry, type Row, type SourceFile } from "./html.ts";
+import { contactHref, foot, h, iconImg, REGISTRY, type Att, type Entry, type Row, type SourceFile } from "./html.ts";
 
 const slip = (tint: string, title: string, body: string, extra = "") =>
   `    <section class="slip ${tint}${extra ? " " + extra : ""}">
@@ -66,8 +66,7 @@ ${files.map(fileCard).join("\n")}
       </div>`
     : `      <p class="fact">not served yet</p>`;
 
-  return `${head(`${d.name} · drops · noraneko`, d.note ?? "")}
-  <p class="eyebrow"><a href="/">noraneko</a> · <a href="/drops/">drops</a></p>
+  return `
   <h1 class="title">${iconImg(DL, d, 32)}${h(d.name)}</h1>
   <p class="gloss">${h(d.note)}</p>
   <p class="status">uuid <span class="uuid">${h(d.uuid)}</span></p>

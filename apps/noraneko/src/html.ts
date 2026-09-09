@@ -30,6 +30,18 @@ export function contactHref(c: string): string | null {
   return /^https?:\/\//.test(c) ? c : null;
 }
 
+/**
+ * 頁の上だけ。材料(dl)を待たずに、これだけ先に流す。
+ * `loading` の一行は、あとから届く `<style>` が消す ── JS は使わない。
+ */
+export const shell = (title: string, description: string, crumb: string, waiting: string) =>
+  `${head(title, description)}
+  <p class="eyebrow">${crumb}</p>
+  <p class="loading">${h(waiting)}</p>`;
+
+/** 材料が揃って、残りを流し終えたところで。上のロードの行を消す */
+export const doneLoading = `<style>.loading{display:none}</style>`;
+
 export const head = (title: string, description: string) => `<!doctype html>
 <html lang="en">
 <head>
