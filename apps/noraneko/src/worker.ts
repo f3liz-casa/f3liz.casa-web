@@ -31,7 +31,14 @@ interface Env {
   DL?: string;
 }
 
+/** 置いておくほう(cache に入れる一枚)。次に来た人はこれを受け取る */
 const HEADERS = { "content-type": "text/html; charset=utf-8", "cache-control": `public, max-age=${TTL}` };
+/**
+ * 流すほう。**cache できる頁として返すと、edge が全部そろうまで溜めてしまう** ──
+ * 本番でそれを踏んで、上を先に流したのに ttfb が 8.7 秒だった。流す一回は貯めさせない
+ * (次からは上の HEADERS を着せた一枚が cache から出るので、そちらが速い)。
+ */
+const STREAM_HEADERS = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" };
 
 async function json<T>(url: string): Promise<T | null> {
   try {
@@ -70,7 +77,7 @@ function streamed(top: string, rest: Promise<string>, ctx: ExecutionContext, cac
     // 途中で落ちたものは置かない(半分の頁が 5 分居座るほうが困る)
     if (body) await cache.put(key, new Response(top + body, { headers: HEADERS }));
   })());
-  return new Response(readable, { headers: HEADERS });
+  return new Response(readable, { headers: STREAM_HEADERS });
 }
 
 export default {
